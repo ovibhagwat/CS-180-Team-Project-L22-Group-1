@@ -10,7 +10,7 @@ public class User {
     private ArrayList<String> friendsList; // store accountID of each friend
     private ArrayList<String> blockList; // store accountID of each blocked user
     private ArrayList<String> messageFilenames; // each dialog has a file to store message
-    private String userProfile;
+    
     public User(String accountID, String password, String filename) {
         this.accountID = accountID;
         this.password = password;
@@ -73,14 +73,7 @@ public class User {
     public void setMessageFilenames(ArrayList<String> messageFilenames) {
         this.messageFilenames = messageFilenames;
     }
-
-    public String getUserProfile() {
-        return userProfile;
-    }
-
-    public void setUserProfile(String userProfile) {
-        this.userProfile = userProfile;
-    }
+    
 
     public void downloadUser() {
         try (BufferedReader bfr = new BufferedReader(new FileReader(getFilename()))) {
