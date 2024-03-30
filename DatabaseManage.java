@@ -70,6 +70,7 @@ public class DatabaseManage {
                 myFriendList.add(accountID);
             }
         }
+        user.uploadUser();
     }
 
     public static void removeFriend(User user, String accountID) throws NotFriendException {
@@ -81,6 +82,7 @@ public class DatabaseManage {
                 throw new NotFriendException("You are not friends with this user.");
             }
         }
+        user.uploadUser();
     }
 
     public static void addBlock(User user, String accountID) throws HaveBlockException {
@@ -92,6 +94,7 @@ public class DatabaseManage {
                 myBlockList.add(accountID);
             }
         }
+        user.uploadUser();
     }
 
     public static void removeBlock(User user, String accountID) throws NotBlockException {
@@ -103,5 +106,6 @@ public class DatabaseManage {
                 myBlockList.remove(accountID);
             }
         }
+        user.uploadUser();
     }
 }
