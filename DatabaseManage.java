@@ -148,6 +148,7 @@ public class DatabaseManage {
             throw new NameSameException("You can't have the new username the same as the old one!");
         } else {
             user.setUserName(newName);
+            user.uploadUser();
         }
     }
 
@@ -156,10 +157,12 @@ public class DatabaseManage {
             throw new NameSameException("You can't have the new password the same as the old one!");
         } else {
             user.setPassword(newPassword);
+            user.uploadUser();
         }
     }
 
     public static void changeUserProfile(User user, String newProfile) {
         user.setUserProfile(newProfile);
+        user.uploadUser();
     }
 }
