@@ -129,22 +129,10 @@ public class User implements UserInterface {
     @Override
     public void uploadUser() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
-            pw.println(userName);
-            String friends;
-            for (i = 0; i < friendsList.size(); i++) {
-                friends += friendsList.get(i)+ " ";
-            }
-            pw.println(friends);
-            String block;
-            for (i = 0; i < blockList.size(); i++) {
-                block += blockList.get(i) + " ";
-            }
-            pw.println(block);
-            String msgFile;
-            for (i = 0; i < messageFilenames.size(); i++) {
-                msgFile += messageFilenames.get(i) + " ";
-            }
-            pw.println(msgFile);
+            pw.println(getUserName());
+            pw.println(getFriendsList());
+            pw.println(getBlockList());
+            pw.println(getMessageFilenames());
             pw.println(getUserProfile());
         } catch (IOException e) {
             e.printStackTrace();
