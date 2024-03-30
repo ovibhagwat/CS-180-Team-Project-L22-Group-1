@@ -39,5 +39,29 @@ public class TestCase {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        try {
+            DatabaseManage.sendMessage("Amy1", "Bob2", "Hey Bob! How are you?");
+
+            // Test sending a message from u2 to u1
+            DatabaseManage.sendMessage("Bob2", "Amy1", "Hi Amy! I'm doing well, thanks!");
+
+            // Test sending an empty message
+            DatabaseManage.sendMessage("Amy1", "Bob2", "");
+
+            // Test sending a message with special characters
+            DatabaseManage.sendMessage("Bob2", "Amy1", "Hello Amy! ~!@#$%^&*()_+{}|:\"<>?");
+
+            // Test sending a long message
+            StringBuilder longMessage = new StringBuilder();
+            for (int i = 0; i < 1000; i++) {
+                longMessage.append("This is a long message. ");
+            }
+            DatabaseManage.sendMessage("Amy1", "Bob2", longMessage.toString());
+
+            // Add more positive test cases as needed
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

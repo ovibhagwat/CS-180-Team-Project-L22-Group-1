@@ -14,9 +14,9 @@ public class Message {
         this.content = content;
         this.timestamp = timestamp;
 
-        if(sender.compareTo(receiver)>0){
+        if(sender.compareTo(receiver)<0){
             filename = sender+receiver;
-        } else if (sender.compareTo(receiver)<0) {
+        } else if (sender.compareTo(receiver)>0) {
             filename = receiver+sender;
         } else {
             filename = null;
