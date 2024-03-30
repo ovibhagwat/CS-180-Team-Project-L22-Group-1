@@ -128,18 +128,30 @@ public class User implements UserInterface {
 
     @Override
     public void uploadUser() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(getFilename()))) {
-            pw.println(getUserName());
-            pw.println(getFriendsList());
-            pw.println(getBlockList());
-            pw.println(getMessageFilenames());
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
+            pw.println(userName);
+            String friends;
+            for (i = 0; i < friendsList.size(); i++) {
+                friends += friendsList.get(i)+ " ";
+            }
+            pw.println(friends);
+            String block;
+            for (i = 0; i < blockList.size(); i++) {
+                block += blockList.get(i) + " ";
+            }
+            pw.println(block);
+            String msgFile;
+            for (i = 0; i < messageFilenames.size(); i++) {
+                msgFile += messageFilenames.get(i) + " ";
+            }
+            pw.println(msgFile);
             pw.println(getUserProfile());
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
     }
-
+    // just change the println to three strings. I think that it would be better to do it this way, since the code before would give a string that does not have any seperations in it.
 
     public String toString() {
         return accountID + " " + password + " " + filename;
