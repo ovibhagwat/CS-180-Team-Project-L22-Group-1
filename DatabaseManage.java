@@ -60,4 +60,48 @@ public class DatabaseManage {
             return false;
         }
     }
+
+    public static void addFriend(User user, String accountID) throws AreFriendException {
+        ArrayList<String> myFriendList = user.getFriendsList();
+        for (int i = 0; i < myFriendList.size(); i++) {
+            if (accountID.equals(myFriendList.get(i))) {
+                throw new AreFriendException("You are already friends with this user!");
+            } else {
+                myFriendList.add(accountID);
+            }
+        }
+    }
+
+    public static void removeFriend(User user, String accountID) throws NotFriendException {
+        ArrayList<String> myFriendList = user.getFriendsList();
+        for (int i = 0; i < myFriendList.size(); i++) {
+            if (accountID.equals(myFriendList.get(i))) {
+                myFriendList.remove(accountID);
+            } else {
+                throw new NotFriendException("You are not friends with this user.");
+            }
+        }
+    }
+
+    public static void addBlock(User user, String accountID) throws HaveBlockException {
+        ArrayList<String> myBlockList = user.getBlockList();
+        for (int i = 0; i < myBlockList.size(); i++) {
+            if (accountID.equals(myBlockList.get(i))) {
+                throw new HaveBlockException("You already have this user blocked!");
+            } else {
+                myBlockList.add(accountID);
+            }
+        }
+    }
+
+    public static void removeBlock(User user, String accountID) throws NotBlockException {
+        ArrayList<String> myBlockList = user.getBlockList();
+        for (int i = 0; i < myBlockList.size(); i++) {
+            if (accountID.equals(myBlockList.get(i))) {
+                throw new NotBlockException("You do not have this user blocked.");
+            } else {
+                myBlockList.remove(accountID);
+            }
+        }
+    }
 }
