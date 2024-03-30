@@ -120,6 +120,7 @@ public class User implements UserInterface {
                 String[] messageArray = line.split(" ");
                 setMessageFilenames(new ArrayList<String>(Arrays.asList(messageArray)));
             }
+            setUserProfile(bfr.readLine());
         } catch (IOException e) {
             return;
         }
@@ -132,6 +133,7 @@ public class User implements UserInterface {
             pw.println(getFriendsList());
             pw.println(getBlockList());
             pw.println(getMessageFilenames());
+            pw.println(getUserProfile());
         } catch (IOException e) {
             e.printStackTrace();
             return;
