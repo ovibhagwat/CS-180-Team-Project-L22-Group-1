@@ -61,6 +61,40 @@ public class DatabaseManage {
         }
     }
 
+    public static void sendMessage(String sender, String receiver, String content) throws ReceiverNotFoundException, ReceiverBlockedException {
+
+        if (!accountExist(receiver)) {
+            throw new ReceiverNotFoundException("Receiver does not exist.");
+        }
+
+        User senderUser = new User(sender, sender + ".txt");
+        senderUser.downloadUser(); // Load sender's data
+
+        if (senderUser.hasBlocked(receiver)) {
+            throw new ReceiverBlockedException("You have blocked the receiver.");
+        }
+
+        Message message = new Message(sender, receiver, content, new Date());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(message.getFilename(), true))) {
+            writer.write(message.getSender() + " " + message.getReceiver() + " " +
+                    message.getContent() + " " + message.getTimestamp() + "\n");
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception as needed
+        }
+    }
+
+    static class ReceiverNotFoundException extends Exception {
+        public ReceiverNotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    static class ReceiverBlockedException extends Exception {
+        public ReceiverBlockedException(String message) {
+            super(message);
+        }
+    }
+
     public static void addFriend(User user, String accountID) throws AreFriendException {
         ArrayList<String> myFriendList = user.getFriendsList();
         for (int i = 0; i < myFriendList.size(); i++) {
