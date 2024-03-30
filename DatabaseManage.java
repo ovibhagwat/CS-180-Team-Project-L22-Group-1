@@ -116,4 +116,12 @@ public class DatabaseManage {
             user.setUserName(newName);
         }
     }
+
+    public static void changePassword(User user, String newPassword) {
+        if (newPassword.equals(user.getPassword())) {
+            throw new NameSameException("You can't have the new password the same as the old one!");
+        } else {
+            user.setPaasword(newPassword);
+        }
+    }
 }
