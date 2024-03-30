@@ -108,4 +108,12 @@ public class DatabaseManage {
         }
         user.uploadUser();
     }
+
+    public static void changeUsername(User user, String newName) {
+        if (newName.equals(user.getUserName())) {
+            throw new NameSameException("You can't have the new username the same as the old one!");
+        } else {
+            user.setUserName(newName);
+        }
+    }
 }
