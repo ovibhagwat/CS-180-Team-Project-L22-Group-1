@@ -24,5 +24,34 @@ public class Message {
 
     }
 
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
+    public String getContent() {
+        return content;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "filename='" + filename + '\'' +
+                ", sender='" + sender + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", content='" + content + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
