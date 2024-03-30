@@ -78,7 +78,7 @@ public class DatabaseManage {
         Message message = new Message(sender, receiver, content, new Date());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(message.getFilename(), true))) {
             writer.write(message.getSender() + " " + message.getReceiver() + " " +
-                    message.getContent() + "\0" + message.getTimestamp() + "\n");
+                    message.getContent() + " " + message.getTimestamp() + "\n");
         } catch (IOException e) {
             e.printStackTrace(); // Handle or log the exception as needed
         }
@@ -213,6 +213,7 @@ public class DatabaseManage {
             throw new NameSameException("You can't have the new username the same as the old one!");
         } else {
             user.setUserName(newName);
+            user.uploadUser();
         }
     }
 
@@ -221,6 +222,12 @@ public class DatabaseManage {
             throw new NameSameException("You can't have the new password the same as the old one!");
         } else {
             user.setPassword(newPassword);
+            user.uploadUser();
         }
+    }
+
+    public static void changeUserProfile(User user, String newProfile) {
+        user.setUserProfile(newProfile);
+        user.uploadUser();
     }
 }
