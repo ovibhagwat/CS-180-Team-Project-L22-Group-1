@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 
 public class DatabaseManage {
     private static String accountFilename = "account.txt";
@@ -77,9 +78,73 @@ public class DatabaseManage {
         Message message = new Message(sender, receiver, content, new Date());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(message.getFilename(), true))) {
             writer.write(message.getSender() + " " + message.getReceiver() + " " +
-                    message.getContent() + " " + message.getTimestamp() + "\n");
+                    message.getContent() + "\0" + message.getTimestamp() + "\n");
         } catch (IOException e) {
             e.printStackTrace(); // Handle or log the exception as needed
+        }
+    }
+
+    public static void deleteMessage(String sender, String receiver, Date timestamp, String deleter) throws IOException, MessageDeletionException {
+        String filename = getMessageFilename(sender, receiver);
+        File file = new File(filename);
+        if (!file.exists()) {
+            throw new FileNotFoundException("Message file not found.");
+        }
+
+        File tempFile = new File(filename + ".tmp");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file));
+             PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
+
+            String line;
+            boolean deleted = false;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" ");
+                String messageSender = parts[0]; // Assuming sender is the second part
+                String[] moreParts = line.split("\0");
+                String messageTimestamp = moreParts[1];
+
+                if (messageSender.equals(sender) && messageTimestamp.equals(Long.toString(timestamp.getTime()))) {
+                    deleted = true;
+                    continue; // Skip writing this line (message) to the temporary file
+                }
+
+                writer.println(line);
+            }
+
+            if (!deleted) {
+                throw new MessageDeletionException("Message not found or you don't have permission to delete it.");
+            }
+        } catch (IOException | MessageDeletionException e) {
+            throw new MessageDeletionException("Failed to delete message due to an IO error.", e);
+        }
+
+        // Replace the original file with the temporary file
+        if (!file.delete()) {
+            throw new IOException("Failed to delete the original file.");
+        }
+        if (!tempFile.renameTo(file)) {
+            throw new IOException("Failed to rename the temporary file.");
+        }
+    }
+
+    static class MessageDeletionException extends Exception {
+        public MessageDeletionException(String message) {
+            super(message);
+        }
+
+        public MessageDeletionException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    private static String getMessageFilename(String sender, String receiver) {
+        if (sender.compareTo(receiver) < 0) {
+            return sender + receiver + ".txt";
+        } else if (sender.compareTo(receiver) > 0) {
+            return receiver + sender + ".txt";
+        } else {
+            return null;
         }
     }
 
@@ -143,7 +208,7 @@ public class DatabaseManage {
         user.uploadUser();
     }
 
-    public static void changeUsername(User user, String newName) {
+    public static void changeUsername(User user, String newName) throws NameSameException {
         if (newName.equals(user.getUserName())) {
             throw new NameSameException("You can't have the new username the same as the old one!");
         } else {
@@ -151,11 +216,11 @@ public class DatabaseManage {
         }
     }
 
-    public static void changePassword(User user, String newPassword) {
+    public static void changePassword(User user, String newPassword) throws NameSameException {
         if (newPassword.equals(user.getPassword())) {
             throw new NameSameException("You can't have the new password the same as the old one!");
         } else {
-            user.setPaasword(newPassword);
+            user.setPassword(newPassword);
         }
     }
 }

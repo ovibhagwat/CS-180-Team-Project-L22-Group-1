@@ -14,10 +14,10 @@ public class Message {
         this.content = content;
         this.timestamp = timestamp;
 
-        if(sender.compareTo(receiver)<0){
-            filename = sender+receiver;
-        } else if (sender.compareTo(receiver)>0) {
-            filename = receiver+sender;
+        if (sender.compareTo(receiver) < 0) {
+            filename = sender + receiver + ".txt";
+        } else if (sender.compareTo(receiver) > 0) {
+            filename = receiver + sender + ".txt";
         } else {
             filename = null;
         }

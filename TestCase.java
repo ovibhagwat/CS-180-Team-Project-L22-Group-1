@@ -1,5 +1,7 @@
+import java.util.Date;
+
 public class TestCase {
-    public static void main(String[] args) {
+    public static <IOException> void main(String[] args) {
         try {
             User u1 = DatabaseManage.createAccount("Amy1", "password1");
             if (u1 != null) {
@@ -63,5 +65,28 @@ public class TestCase {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        try {
+            DatabaseManage.deleteMessage("Amy1", "Bob2", new Date("Sat Mar 30 17:28:29 EDT 2024"), "Amy1");
+            System.out.println("Message deleted successfully.");
+        } catch (Exception e) {
+            System.out.println("Failed to delete the message: " + e.getMessage());
+        }
+
+        // Test trying to delete a message that doesn't exist
+        try {
+            DatabaseManage.deleteMessage("Amy1", "Bob2", new Date("Mon Mar 30 17:28:29 EDT 2024"), "Amy1");
+            System.out.println("Message deleted successfully."); // Should not print
+        } catch (Exception e) {
+            System.out.println("Failed to delete the message: " + e.getMessage()); // Should print
+        }
+
+        // Test attempting to delete a message by someone who is not the sender
+//        try {
+//            DatabaseManage.deleteMessage("Bob2", "Amy1", new Date(), "Amy1");
+//            System.out.println("Message deleted successfully."); // Should not print
+//        } catch (Exception e) {
+//            System.out.println("Failed to delete the message: " + e.getMessage()); // Should print
+//        }
     }
 }

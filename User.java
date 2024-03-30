@@ -142,7 +142,10 @@ public class User implements UserInterface {
     // just change the println to three strings. I think that it would be better to do it this way, since the code before would give a string that does not have any seperations in it.
 
     public boolean hasBlocked(String user){
-        return blockList.contains(user);
+        if (blockList.contains(user)){
+            return true;
+        }
+        return false;
     }
 
     public String toString() {
