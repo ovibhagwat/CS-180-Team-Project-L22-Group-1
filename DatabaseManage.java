@@ -36,9 +36,11 @@ public class DatabaseManage {
                     } else {
                         throw new PasswordIncorrectException("Password is not correct.");
                     }
+                } else {
+                    throw new AccountDoesNotExistException("Account does not exist, please create one.");
                 }
             }
-            throw new AccountDoesNotExistException("Account does not exist, please create one.");
+            
         } catch (IOException e) {
             return null;
         }
