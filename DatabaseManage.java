@@ -128,15 +128,7 @@ public class DatabaseManage {
         }
     }
 
-    static class MessageDeletionException extends Exception {
-        public MessageDeletionException(String message) {
-            super(message);
-        }
-
-        public MessageDeletionException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
+    
 
     private static String getMessageFilename(String sender, String receiver) {
         if (sender.compareTo(receiver) < 0) {
