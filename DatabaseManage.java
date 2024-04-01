@@ -148,18 +148,6 @@ public class DatabaseManage {
         }
     }
 
-    static class ReceiverNotFoundException extends Exception {
-        public ReceiverNotFoundException(String message) {
-            super(message);
-        }
-    }
-
-    static class ReceiverBlockedException extends Exception {
-        public ReceiverBlockedException(String message) {
-            super(message);
-        }
-    }
-
     public static void addFriend(User user, String accountID) throws AreFriendException {
         ArrayList<String> myFriendList = user.getFriendsList();
         for (int i = 0; i < myFriendList.size(); i++) {
