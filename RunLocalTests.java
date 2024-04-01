@@ -113,8 +113,8 @@ public class RunLocalTest {
                 newUsers.get(0).setUserProfile("This is mike.");
                 newUsers.get(1).setUserProfile("I'm Adam. I like running!");
                 newUsers.get(2).setUserProfile("Hey, my name is John!");
-                assertEquals(null, newUsers.get(0).getFriendList().get(0));
-                assertEquals(null, newUsers.get(2).getBlockList().get(0));
+                assertNull(newUsers.get(0).getFriendList().get(0));
+                assertNull(newUsers.get(2).getBlockList().get(0));
                 assertEquals("John5648", newUsers.get(2).getUserName());
                 assertEquals(true, newUsers.get(0).hasBlocked("Adam123"));
                 for (int i = 0; i < newUsers.size() - 2; i++) {
@@ -125,6 +125,74 @@ public class RunLocalTest {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                fail();
+            }
+        }
+        public void testDatabase() {
+            try {
+                User newUser = createAccount("John123", "asdf123");
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail();
+            }
+            try {
+                User loginUser = login("John123", "asdf123");
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail();
+            }
+            assertEquals(true, accountExist("John123"));
+            try {
+                sendMessage("John123", "Adam123", "Hello");
+            } catch (IOException e) {
+                e.printStackTrace();
+                fail();
+            }
+            Date timestamp = new Date();
+            try {
+                deleteMessage("John123", "Adam123", timestamp, "John123");
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail();
+            }
+            assertEquals("AdamJohn.txt", getMessageFilename("John", "Adam"));
+            try {
+                addFriend(loginUser, "Adam123");
+            } catch (AreFriendException e) {
+                fail();
+            }
+            try {
+                removeFriend(loginUser, "Adam123");
+            } catch (NotFriendException e) {
+                fail();
+            }
+            try {
+                addBlock(loginUser, "Adam123");
+            } catch (HaveBlockException e) {
+                fail();
+            }
+            try {
+                removeBlock(loginUser, "Adam123");
+            } catch (NotBlockException e) {
+                fail();
+            }
+            try {
+                changeUsername(loginUser, "John1069");
+            } catch (NameSameException e) {
+                fail();
+            } catch (IOException e) {
+                fail();
+            }
+            try {
+                changePassword(loginUser, "aabbccdd");
+            } catch (NameSameException e) {
+                fail();
+            } catch (IOException e) {
+                fail();
+            }
+            try {
+                changeUserProfile(loginUser, "This is John!")
+            } catch (IOException e) {
                 fail();
             }
         }
