@@ -45,25 +45,29 @@ public class ClientHandler implements Runnable {
     
     private RequestResponseProtocal.Response processBlockRequest(RequestResponseProtocal.Request request) {
         Map<String, Object> parameters = request.getParameters();
-        if (parameters != null) {
+        if (parameters != null && parameters.containsKey("accountID") && parameters.containsKey("User")) {
             try {
                 parameters.get("User").addBlock(parameters.get("accountID"));
                 return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS, "User blocked successfully");
             } catch (FriendBlockErrorException e) {
                 return createErrorResponse(e.getErrorCode());
             }
+        } else {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
         }
     }
     
     private RequestResponseProtocal.Response processUnblockRequest(RequestResponseProtocal.Request request) {
         Map<String, Object> parameters = request.getParameters();
-        if (parameters != null) {
+        if (parameters != null && parameters.containsKey("accountID") && parameters.containsKey("User")) {
             try {
                 parameters.get("User").removeBlock(parameters.get("accountID"));
                 return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS, "User unblocked successfully");
             } catch (FriendBlockErrorException e) {
                 return createErrorResponse(e.getErrorCode());
             }
+        } else {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
         }
     }
 
