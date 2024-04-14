@@ -1,7 +1,37 @@
-/**
- * This is an interface for phase 2
- */
-public interface ServerMain {
-    void startServer(int port);
-    void stopServer();
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ServerMain implements ServerMainInterface, Runnable {
+    private ServerSocket serverSocket;
+
+    public void startServer(int port) {
+        try {
+            serverSocket = new ServerSocket(port);
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("New client connected " + clientSocket);
+
+                new Thread(new ClientHandler(clientSocket)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopServer() {
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+                System.out.println("Server stopped.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run() {
+
+    }
 }
