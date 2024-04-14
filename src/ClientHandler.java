@@ -48,7 +48,7 @@ public class ClientHandler implements Runnable {
         if (parameters != null && parameters.containsKey("accountID") && parameters.containsKey("User")) {
             try {
                 parameters.get("User").addBlock(parameters.get("accountID"));
-                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS, "User blocked successfully");
+                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS);
             } catch (FriendBlockErrorException e) {
                 return createErrorResponse(e.getErrorCode());
             }
@@ -62,7 +62,7 @@ public class ClientHandler implements Runnable {
         if (parameters != null && parameters.containsKey("accountID") && parameters.containsKey("User")) {
             try {
                 parameters.get("User").removeBlock(parameters.get("accountID"));
-                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS, "User unblocked successfully");
+                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS);
             } catch (FriendBlockErrorException e) {
                 return createErrorResponse(e.getErrorCode());
             }
