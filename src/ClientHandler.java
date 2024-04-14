@@ -1,7 +1,20 @@
 import java.net.Socket;
-/**
- * This is an interface for phase 2
- */
-public interface ClientHandler {
-    void handleClient(Socket clientSocket);
+import java.util.Scanner;
+import java.io.*;
+
+public class ClientHandler implements Runnable {
+    private Socket socket;
+    private DatabaseManage databaseManage;
+    private int threadNum;
+
+    public ClientHandler(Socket socket, int threadNum) {
+        this.socket = socket;
+        this.threadNum = threadNum;
+    }
+
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+
+    }
+
 }
