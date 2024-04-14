@@ -42,6 +42,52 @@ public class ClientHandler implements Runnable {
     private RequestResponseProtocol.Response processLogoutRequest(RequestResponseProtocol.Request request) {
         // Your logic to handle fetch data request  
     }
+
+    private RequestResponseProtocol.Response processAddFriendRequest(RequestResponseProtocol.Request request) {
+        Map<String, Object> params = request.getParameters();
+        User user = (User) params.get("user");
+        String friendAccountID = (String) params.get("friendAccountID");
+
+        User friend = new User(friendAccountID);
+
+        if (user == null || friend == null) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.USER_NOT_FOUND);
+        }
+
+        try {
+            user.addFriend(friendAccountID);
+            RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
+            response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
+            return response;
+        } catch (FriendBlockErrorException e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.PERMISSION_DENIED);
+        } catch (Exception e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    private RequestResponseProtocol.Response processRemoveFriendRequest(RequestResponseProtocol.Request request) {
+        Map<String, Object> params = request.getParameters();
+        User user = (User) params.get("user");
+        String friendAccountID = (String) params.get("friendAccountID");
+        User friend = new User(friendAccountID);
+        if (user == null || friend == null) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.USER_NOT_FOUND);
+        }
+
+        try {
+            user.removeFriend(friendAccountID);
+            RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
+            response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
+            return response;
+        } catch (FriendBlockErrorException e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.PERMISSION_DENIED);
+        } catch (Exception e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+    }
     
     private RequestResponseProtocal.Response processBlockRequest(RequestResponseProtocal.Request request) {
         Map<String, Object> parameters = request.getParameters();
