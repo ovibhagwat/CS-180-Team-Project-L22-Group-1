@@ -44,7 +44,7 @@ public class ClientHandler implements Runnable {
     }
     
     private RequestResponseProtocal.Response processBlockRequest(RequestResponseProtocal.Request request) {
-        Map<String, object> parameters = request.getParameters();
+        Map<String, Object> parameters = request.getParameters();
         if (parameters != null) {
             try {
                 parameters.get("User").addBlock(parameters.get("accountID"));
@@ -56,7 +56,7 @@ public class ClientHandler implements Runnable {
     }
     
     private RequestResponseProtocal.Response processUnblockRequest(RequestResponseProtocal.Request request) {
-        Map<String, object> parameters = request.getParameters();
+        Map<String, Object> parameters = request.getParameters();
         if (parameters != null) {
             try {
                 parameters.get("User").removeBlock(parameters.get("accountID"));
