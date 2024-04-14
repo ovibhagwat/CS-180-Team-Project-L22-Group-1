@@ -4,7 +4,6 @@ import java.io.*;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
-    private DatabaseManage databaseManage;
     private int threadNum;
 
     public ClientHandler(Socket socket, int threadNum) {
@@ -13,7 +12,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void run() {
-        Scanner scanner = new Scanner(System.in);
+        System.out.printf("Thread %d\n", threadNum);
 
     }
 
