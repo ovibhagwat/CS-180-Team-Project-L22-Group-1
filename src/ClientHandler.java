@@ -22,6 +22,12 @@ public class ClientHandler implements Runnable {
                 // Process fetch data request
                 return processLogoutRequest(request);
             // Add more cases for other request types as needed
+            case BLOCK_USER:
+                // Process block user request
+                return processBlockRequest(request);
+            case UNBLOCK_USER:
+                // Process unblock user request
+                return processUnblockRequest(request);
             default:
                 // Handle unrecognized request types
                 return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
@@ -34,7 +40,31 @@ public class ClientHandler implements Runnable {
 
     // Method to process fetch data request
     private RequestResponseProtocol.Response processLogoutRequest(RequestResponseProtocol.Request request) {
-        // Your logic to handle fetch data request
+        // Your logic to handle fetch data request  
+    }
+    
+    private RequestResponseProtocal.Response processBlockRequest(RequestResponseProtocal.Request request) {
+        Map<String, object> parameters = request.getParameters();
+        if (parameters != null) {
+            try {
+                parameters.get("User").addBlock(parameters.get("accountID"));
+                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS, "User blocked successfully");
+            } catch (FriendBlockErrorException e) {
+                return createErrorResponse(e.getErrorCode());
+            }
+        }
+    }
+    
+    private RequestResponseProtocal.Response processUnblockRequest(RequestResponseProtocal.Request request) {
+        Map<String, object> parameters = request.getParameters();
+        if (parameters != null) {
+            try {
+                parameters.get("User").removeBlock(parameters.get("accountID"));
+                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS, "User unblocked successfully");
+            } catch (FriendBlockErrorException e) {
+                return createErrorResponse(e.getErrorCode());
+            }
+        }
     }
 
     // Method to create an error response
