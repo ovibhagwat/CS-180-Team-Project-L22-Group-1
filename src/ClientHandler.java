@@ -21,7 +21,12 @@ public class ClientHandler implements Runnable {
             case LOGOUT:
                 // Process fetch data request
                 return processLogoutRequest(request);
-            // Add more cases for other request types as needed
+            case CREATE_ACCOUNT:
+                // Process create new account request
+                return processCreateAcctRequest(request);
+            case SEND_MESSAGE:
+                // Process send a message request
+                return processSendMsgRequest(request);
             case BLOCK_USER:
                 // Process block user request
                 return processBlockRequest(request);
@@ -114,6 +119,59 @@ public class ClientHandler implements Runnable {
             }
         } else {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
+        }
+    }
+
+    private RequestResponseProtocol.Response processCreateAcctRequest(RequestResponseProtocol.Request request) {
+        Map<String, Object> params = request.getParameters();
+        String accountID = (String) params.get("accountID");
+        String password = (String) params.get("password");
+
+        if (accountID == null || password == null) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
+        }
+
+        try {
+            // Attempt to create an account
+            User user = createAccount(accountID, password);
+
+            // If account creation is successful, return success response
+            RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
+            response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
+            return response;
+        } catch (AccountExistException e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.ACCOUNT_ALREADY_EXISTS);
+        } catch (PasswordInvalidException e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_PASSWORD);
+        } catch (Exception e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private RequestResponseProtocol.Response processSendMsgRequest(RequestResponseProtocol.Request request) {
+        Map<String, Object> params = request.getParameters();
+        String senderID = (String) params.get("senderID");
+        String receiverID = (String) params.get("receiverID");
+        String message = (String) params.get("message");
+
+        if (senderID == null || receiverID == null || message == null) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
+        }
+
+        try {
+            // Attempt to send message
+            sendMessage(senderID, receiverID, message);
+
+            // If message sending is successful, return success response
+            RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
+            response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
+            return response;
+        } catch (ReceiverNotFoundException e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.RECEIVER_NOT_FOUND);
+        } catch (ReceiverBlockedException e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.RECEIVER_BLOCKED);
+        } catch (Exception e) {
+            return createErrorResponse(RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
