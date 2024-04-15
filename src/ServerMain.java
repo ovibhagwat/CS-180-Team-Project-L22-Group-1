@@ -39,48 +39,4 @@ public class ServerMain implements ServerMainInterface, Runnable {
     public void run() {
 
     }
-
-    public static void handleClient(Socket clientSocket) {
-        try {
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter pw = new PrintWriter(clientSocket.getOutputStream(), true);
-            String request = bfr.readLine();
-            String response = processRequest(request);
-            pw.println(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                clientSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static String processRequest(String request) {
-        String[] parts = request.split(" ");
-        String command = parts[0];
-        String accountID = parts[1];
-        String password = parts[2];
-        
-        switch (command) {
-            case "LOGIN":
-                try {
-                    User user = DatabaseManage.login(accountID, password);
-                    return "LOGIN_SUCCESS " + user.getAccountID();
-                } catch (PasswordErrorException | AccountErrorException e) {
-                    return "LOGIN_ERROR " + e.getMessage();
-                }
-            case "REGISTER":
-                try {
-                    User newUser = DatabaseManage.createAccount(accountID, password);
-                    return "REGISTER_SUCCESS " + newUser.getAccountID();
-                } catch (AccountErrorException | PasswordErrorException e) {
-                    return "REGISTER_ERROR " + e.getMessage();
-                }
-            default:
-                return "INVALID_COMMAND";
-        }
-    }
 }
