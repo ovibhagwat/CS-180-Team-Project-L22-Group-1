@@ -1,4 +1,5 @@
 import java.net.*;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ClientHandler implements Runnable {
@@ -45,7 +46,7 @@ public class ClientHandler implements Runnable {
 
     // Method to process fetch data request
     private RequestResponseProtocol.Response processLogoutRequest(RequestResponseProtocol.Request request) {
-        // Your logic to handle fetch data request  
+        // Your logic to handle fetch data request
     }
 
     private RequestResponseProtocol.Response processAddFriendRequest(RequestResponseProtocol.Request request) {
@@ -93,29 +94,31 @@ public class ClientHandler implements Runnable {
         }
 
     }
-    
-    private RequestResponseProtocal.Response processBlockRequest(RequestResponseProtocal.Request request) {
+
+    private RequestResponseProtocol.Response processBlockRequest(RequestResponseProtocol.Request request) {
         Map<String, Object> parameters = request.getParameters();
         if (parameters != null && parameters.containsKey("accountID") && parameters.containsKey("User")) {
             try {
                 parameters.get("User").addBlock(parameters.get("accountID"));
-                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS);
+                RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
+                response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
             } catch (FriendBlockErrorException e) {
-                return createErrorResponse(e.getErrorCode());
+                return createErrorResponse(RequestResponseProtocol.ErrorCode.PERMISSION_DENIED);
             }
         } else {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
         }
     }
-    
-    private RequestResponseProtocal.Response processUnblockRequest(RequestResponseProtocal.Request request) {
+
+    private RequestResponseProtocol.Response processUnblockRequest(RequestResponseProtocol.Request request) {
         Map<String, Object> parameters = request.getParameters();
         if (parameters != null && parameters.containsKey("accountID") && parameters.containsKey("User")) {
             try {
                 parameters.get("User").removeBlock(parameters.get("accountID"));
-                return new RequestResponseProtocol().new Response(RequestResponseProtocol.ResponseType.SUCCESS);
+                RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
+                response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
             } catch (FriendBlockErrorException e) {
-                return createErrorResponse(e.getErrorCode());
+                return createErrorResponse(RequestResponseProtocol.ErrorCode.PERMISSION_DENIED);
             }
         } else {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_REQUEST);
@@ -133,15 +136,15 @@ public class ClientHandler implements Runnable {
 
         try {
             // Attempt to create an account
-            User user = createAccount(accountID, password);
+            DatabaseManage.createAccount(accountID, password);
 
             // If account creation is successful, return success response
             RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
             response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
             return response;
-        } catch (AccountExistException e) {
+        } catch (AccountErrorException e) {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.ACCOUNT_ALREADY_EXISTS);
-        } catch (PasswordInvalidException e) {
+        } catch (PasswordErrorException e) {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.INVALID_PASSWORD);
         } catch (Exception e) {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
@@ -160,15 +163,16 @@ public class ClientHandler implements Runnable {
 
         try {
             // Attempt to send message
-            sendMessage(senderID, receiverID, message);
+            User user = new User(senderID);
+            user.sendMessage(senderID, receiverID, message);
 
             // If message sending is successful, return success response
             RequestResponseProtocol.Response response = new RequestResponseProtocol().new Response();
             response.setType(RequestResponseProtocol.ResponseType.SUCCESS);
             return response;
-        } catch (ReceiverNotFoundException e) {
+        } catch (ReceiverErrorException e) {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.RECEIVER_NOT_FOUND);
-        } catch (ReceiverBlockedException e) {
+        } catch (ReceiverErrorException e) {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.RECEIVER_BLOCKED);
         } catch (Exception e) {
             return createErrorResponse(RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
@@ -183,4 +187,3 @@ public class ClientHandler implements Runnable {
         return response;
     }
 }
-
