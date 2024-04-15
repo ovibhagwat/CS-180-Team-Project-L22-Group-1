@@ -3,18 +3,17 @@
 ## Compilation and Execution Instructions
 
 1. **Compile the Java files:**
-    The user don't need any extra files to compile the java files.
+    The user doesn't need any extra files to compile the java files.
 2. **Execute the Main Program:**
-    - All main program is in the test java files, there are five test files in total, each tests one java class.
+    - All main programs are in the test java files. There are five test files in total, each tests one java class.
     - To run the test cases, ensure you have JUnit configured in your project.
     Compile the test classes, ensuring you include the JUnit library in the classpath.
     - To run TestUser.java, TestMessage.java and TestConversation.java, you don't need any extra files and no files 
-      will 
-   create after running.
+      will create after running.
     - To run TestPhotoMessage.java, you will need a photo file which has filename of "testPic.png", or you can change 
    the TEST_IMAGE_PATH in the test code. And no file will create after running.
    - To run TestDatabaseManage.java, after running, there will be two files "loginUser.txt" and "Amy123_Bob456.txt" 
-   create, that's normal, please delete them after running.
+   created, that's normal, please delete them after running.
    When you run each test file, there will be a "All tests passed!" output to indicate test successfully.
 
 ## Class Descriptions
