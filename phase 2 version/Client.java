@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,10 +16,16 @@ import java.util.Map;
  * @version April 15, 2024
  */
 
-public class Client implements ClientInterface {
+public class Client extends JComponent implements ClientInterface {
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JButton loginButton;
+    private JTextArea messageArea;
+
 
     public Client(String serverAddress, int serverPort) {
         try {
@@ -54,6 +63,46 @@ public class Client implements ClientInterface {
         }
     }
 
+    public void setupGUI() {
+        JFrame frame = new JFrame("Client Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+
+        JPanel panel = new JPanel();
+        frame.add(panel);
+        panel.setLayout(new GridLayout(3, 2));
+
+        usernameField = new JTextField();
+        passwordField = new JPasswordField();
+        loginButton = new JButton("Login");
+        messageArea = new JTextArea();
+
+        panel.add(new JLabel("Username:"));
+        panel.add(usernameField);
+        panel.add(new JLabel("Password"));
+        panel.add(passwordField);
+        panel.add(loginButton);
+        panel.add(new JScrollPane(messageArea));
+
+        loginButton.addActionListener(e -> {
+            String username = usernameField.getText();
+            char[] password = passwordField.getPassword();
+            Map<String, Object> params = new HashMap<>();
+            params.put("username", username);
+            params.put("password", new String(password));
+            RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.LOGIN, params);
+            sendRequest(request);
+            RequestResponseProtocol.Response response = receiveResponse();
+            if (response != null) {
+                messageArea.setText("Response: " + response.getData());
+            }
+        });
+
+        frame.setVisible(true);
+
+
+    }
+
     // Method to close the client connection
     public void close() {
         try {
@@ -71,6 +120,7 @@ public class Client implements ClientInterface {
     public static void main(String[] args) {
         // Create a client instance and connect to the server
         Client client = new Client("localhost", 4242);
+
 
         // The following code is just for test the networkIO
         // not real implement, will be modified in phase 3
@@ -94,4 +144,3 @@ public class Client implements ClientInterface {
 
     }
 }
-
