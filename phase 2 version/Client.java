@@ -22,8 +22,11 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private User user;
+    private CardLayout cardLayout;
+    private JPanel panels;
     private JTextField usernameField;
     private JPasswordField passwordField;
+    private JPasswordField passwordField2;
     private JButton sendButton;
 
 
@@ -66,45 +69,38 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     public void createAndShowGUI() {
         JFrame frame = new JFrame("Welcome!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 150);
-        frame.setLayout(new BorderLayout());
+        frame.setSize(300, 200);
 
-        JPanel panel = new JPanel(new GridLayout(1, 2));
-        JButton loginButton = new JButton("Login");
-        JButton createAccountButton = new JButton("Create Account");
+        cardLayout = new CardLayout();
+        panels = new JPanel(cardLayout);
 
-        panel.add(loginButton);
-        panel.add(createAccountButton);
+        addLoginPanel();
+        addAccountCreationPanel();
 
-        frame.add(panel, BorderLayout.CENTER);
-
-        loginButton.addActionListener(e -> openLoginWindow());
-        createAccountButton.addActionListener(e -> openAccountCreationWindow());
-
+        frame.add(panels);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
     }
 
-    public void openLoginWindow() {
-        JFrame loginFrame = new JFrame("Login");
-        loginFrame.setSize(300, 200);
-        loginFrame.setLayout(new GridLayout(3, 2));
+    public void addLoginPanel() {
+        JPanel loginPanel = new JPanel(new GridLayout(3, 2));
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
         JButton loginButton = new JButton("Login");
-
-        loginFrame.add(new JLabel("Username:"));
-        loginFrame.add(usernameField);
-        loginFrame.add(new JLabel("Password:"));
-        loginFrame.add(passwordField);
-        loginFrame.add(loginButton);
+        JButton switchToCreateButton = new JButton("Create Account");
 
         loginButton.addActionListener(e -> handleLogin());
+        switchToCreateButton.addActionListener(e -> cardLayout.show(panels, "CreateAccount"));
+        loginPanel.add(new JLabel("Username:"));
+        loginPanel.add(usernameField);
+        loginPanel.add(new JLabel("Password:"));
+        loginPanel.add(passwordField);
+        loginPanel.add(loginButton);
+        loginPanel.add(switchToCreateButton);
 
-        loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        loginFrame.setLocationRelativeTo(null);
-        loginFrame.setVisible(true);
+        panels.add(loginPanel, "Login");
+
     }
 
     public void handleLogin() {
@@ -132,32 +128,43 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     "Error", JOptionPane.ERROR_MESSAGE);
 
         }
+        // Example of switching to Profile panel after logging in:
+        // cardLayout.show(panels, "Profile")
     }
 
-    public void openAccountCreationWindow() {
-        JFrame createAccountFrame = new JFrame("Create Account");
-        createAccountFrame.setSize(300, 200);
-        createAccountFrame.setLayout(new GridLayout(3, 2));
+    public void addAccountCreationPanel() {
+        JPanel createPanel = new JPanel(new GridLayout(4, 2));
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
-        JButton createAccountButton = new JButton("Create Account");
+        passwordField2 = new JPasswordField(20);
+        JButton createButton = new JButton("Create Account");
+        JButton switchToLoginButton = new JButton("Back to Login");
 
-        createAccountFrame.add(new JLabel("Set Username:"));
-        createAccountFrame.add(usernameField);
-        createAccountFrame.add(new JLabel("Set Password:"));
-        createAccountFrame.add(passwordField);
-        createAccountFrame.add(createAccountButton);
+        createButton.addActionListener(e -> handleCreateAccount());
+        switchToLoginButton.addActionListener(e -> cardLayout.show(panels, "Login"));
 
-        createAccountButton.addActionListener(e -> handleCreateAccount());
+        createPanel.add(new JLabel("Set Username:"));
+        createPanel.add(usernameField);
+        createPanel.add(new JLabel("Set Password:"));
+        createPanel.add(passwordField);
+        createPanel.add(new JLabel("Confirm Password"));
+        createPanel.add(passwordField2);
+        createPanel.add(createButton);
+        createPanel.add(switchToLoginButton);
 
-        createAccountFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        createAccountFrame.setLocationRelativeTo(null);
-        createAccountFrame.setVisible(true);
+        panels.add(createPanel, "CreateAccount");
     }
 
     public void handleCreateAccount() {
         String username = usernameField.getText();
         char[] password = passwordField.getPassword();
+        char[] password2 = passwordField2.getPassword();
+
+        if (password != password2) {
+            JOptionPane.showMessageDialog(null, "Passwords must match!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         // Prepare request parameters
         Map<String, Object> params = new HashMap<>();
@@ -180,6 +187,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     "Error", JOptionPane.ERROR_MESSAGE);
 
         }
+        // Example of switching to Profile panel after creating account:
+        // cardLayout.show(panels, "Profile")
     }
 
     public static void setLookAndFeel() {
@@ -208,6 +217,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         // Create a client instance and connect to the server
         Client client = new Client("localhost", 4242);
         setLookAndFeel();
-        client.createAndShowGUI();
+        SwingUtilities.invokeLater(client::createAndShowGUI);
     }
 }
