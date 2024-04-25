@@ -90,6 +90,10 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.insets = new Insets(10, 10, 10, 10);
 
+        loginPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Login"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
        // loginPanel.setBorder(BorderFactory.createTitledBorder("Login"));
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
@@ -156,6 +160,10 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.insets = new Insets(10, 10, 10, 10);
+
+        createPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Create Account"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
@@ -235,9 +243,19 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     public static void setLookAndFeel() {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         }
     }
 
