@@ -9,7 +9,7 @@ import java.util.Arrays;
  * @author Yixin Hu, Yiyang Liu, Chloe Barnes
  * @version April 1, 2024
  */
-public class User implements UserInterface {
+public class User implements UserInterface, Serializable {
     private String filename; // each user has a file to store user's data, "accountID.txt"
     private String accountID; // unique for every user, primary key
     private String password; // password for user account
