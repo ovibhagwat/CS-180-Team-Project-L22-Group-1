@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.ArrayList;
 /**
  * A program that implements Client class
  *
@@ -25,10 +27,15 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private User user;
     private CardLayout cardLayout;
     private JPanel panels;
+    private JTextArea messageArea;
     private JTextField usernameField;
+    private JTextField messageField;
     private JPasswordField passwordField;
     private JPasswordField passwordField2;
     private JButton sendButton;
+    private JButton exitButton;
+    private JButton deleteButton;
+    private JScrollPane scrollPane;
 
 
     public Client(String serverAddress, int serverPort) {
@@ -265,6 +272,73 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         }
     }
 
+    public void openMessageGui(User receiveUser) {
+        String receiveName = receiveUser.getUserName();
+        JFrame frame = new JFrame(receiveName);
+        Conversation conversation = new Conversation(user, receiveUser);
+        conversation.readMessages();
+        ArrayList<Message> messages = conversation.getMessages();
+        int counts = messages.size();
+        messageArea.setLineWrap(true);
+        messageArea.setEditable(false);
+        messageArea.setWrapStyleWord(true);
+        Insets insets = messageArea.getInsets();
+        Insets margin = new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        messageArea.setMargin(margin);
+        for (int i = 0; i < counts; i++) {
+            String sender = messages.get(i).getSender();
+            String contentBefore = messages.get(i).getContent();
+            Date date = messages.get(i).getTimestamp();
+            String previousMessage = sender + ": \n" + contentBefore + "\n" + date + "\n\n";
+            messageArea.append(previousMessage);
+        }
+        //load the previous message to the messageArea
+        JScrollPane scrollPane = new JScrollPane(messageArea);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        messageField = new JTextField();
+        sendButton = new JButton("Send");
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new BorderLayout());
+        panel1.add(messageField, BorderLayout.CENTER);
+        panel1.add(sendButton, BorderLayout.EAST);
+        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(panel1, BorderLayout.SOUTH);
+        JPanel panel2 = new JPanel();
+        exitButton = new JButton("<- Back");
+        deleteButton = new JButton("Delete");
+        panel2.setLayout(new BorderLayout());
+        panel2.add(exitButton, BorderLayout.WEST);
+        panel2.add(deleteButton, BorderLayout.EAST);
+        frame.add(panel2, BorderLayout.NORTH);
+        frame.setVisible(true);
+        sendButton.addActionListener(e -> {
+            String content = messageField.getText();
+            if (content != null) {
+                Message message = new Message("text", user.getAccountID(), receiveName, content);
+                Map<String, Object> params = new HashMap<>();
+                params.put("conversation", conversation);
+                params.put("message", message);
+                RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.SEND_MESSAGE, params);
+                sendRequest(request);
+                RequestResponseProtocol.Response response = receiveResponse();
+                if (response != null) {
+                    if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
+                        JOptionPane.showMessageDialog(this, "Failed to send message: " + response.getErrorCode(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        int size = conversation.getMessages().size();
+                        String sender = messages.get(size - 1).getSender();
+                        String contentBefore = messages.get(size - 1).getContent();
+                        Date date = messages.get(size - 1).getTimestamp();
+                        String messageNow = sender + ": \n" + contentBefore + "\n" + date + "\n\n";
+                    }
+                }
+            }
+        });
+        frame.setVisible(true);
+    } 
+    
     // Method to close the client connection
     public void close() {
         try {
