@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.Serializable;
@@ -69,7 +70,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     public void createAndShowGUI() {
         JFrame frame = new JFrame("Welcome!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 200);
+        frame.setSize(500, 500);
 
         cardLayout = new CardLayout();
         panels = new JPanel(cardLayout);
@@ -84,20 +85,38 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     }
 
     public void addLoginPanel() {
-        JPanel loginPanel = new JPanel(new GridLayout(3, 2));
+        JPanel loginPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+       // loginPanel.setBorder(BorderFactory.createTitledBorder("Login"));
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        loginPanel.add(new JLabel("Username"), constraints);
+
+        constraints.gridx = 1;
+        loginPanel.add(usernameField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        loginPanel.add(new JLabel("Password"), constraints);
+        constraints.gridx = 1;
+        loginPanel.add(passwordField, constraints);
         JButton loginButton = new JButton("Login");
-        JButton switchToCreateButton = new JButton("Create Account");
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        loginPanel.add(loginButton, constraints);
+
+        JButton switchToCreateButton = new JButton("Switch to Create Account");
+        constraints.gridy = 3;
+        loginPanel.add(switchToCreateButton, constraints);
 
         loginButton.addActionListener(e -> handleLogin());
         switchToCreateButton.addActionListener(e -> cardLayout.show(panels, "CreateAccount"));
-        loginPanel.add(new JLabel("Username:"));
-        loginPanel.add(usernameField);
-        loginPanel.add(new JLabel("Password:"));
-        loginPanel.add(passwordField);
-        loginPanel.add(loginButton);
-        loginPanel.add(switchToCreateButton);
 
         panels.add(loginPanel, "Login");
 
@@ -133,24 +152,45 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     }
 
     public void addAccountCreationPanel() {
-        JPanel createPanel = new JPanel(new GridLayout(4, 2));
+        JPanel createPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
         passwordField2 = new JPasswordField(20);
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        createPanel.add(new JLabel("Set Username"), constraints);
+        constraints.gridx = 1;
+        createPanel.add(usernameField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        createPanel.add(new JLabel("Set Password"), constraints);
+        constraints.gridx = 1;
+        createPanel.add(passwordField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        createPanel.add(new JLabel("Confirm Password"), constraints);
+        constraints.gridx = 1;
+        createPanel.add(passwordField2, constraints);
+
         JButton createButton = new JButton("Create Account");
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.gridwidth = 2;
+
+        createPanel.add(createButton, constraints);
         JButton switchToLoginButton = new JButton("Back to Login");
+        constraints.gridy = 4;
+        createPanel.add(switchToLoginButton, constraints);
 
         createButton.addActionListener(e -> handleCreateAccount());
         switchToLoginButton.addActionListener(e -> cardLayout.show(panels, "Login"));
-
-        createPanel.add(new JLabel("Set Username:"));
-        createPanel.add(usernameField);
-        createPanel.add(new JLabel("Set Password:"));
-        createPanel.add(passwordField);
-        createPanel.add(new JLabel("Confirm Password"));
-        createPanel.add(passwordField2);
-        createPanel.add(createButton);
-        createPanel.add(switchToLoginButton);
 
         panels.add(createPanel, "CreateAccount");
     }
@@ -160,9 +200,11 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         char[] password = passwordField.getPassword();
         char[] password2 = passwordField2.getPassword();
 
-        if (password != password2) {
+        if (!Arrays.equals(password, password2)) {
             JOptionPane.showMessageDialog(null, "Passwords must match!",
                     "Error", JOptionPane.ERROR_MESSAGE);
+            passwordField.setText("");
+            passwordField2.setText("");
             return;
         }
 
