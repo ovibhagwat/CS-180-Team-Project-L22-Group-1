@@ -67,11 +67,13 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         }
     }
 
+    // Method to create GUI JFrame
     public void createAndShowGUI() {
         JFrame frame = new JFrame("Welcome!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
 
+        // Using cardLayout
         cardLayout = new CardLayout();
         panels = new JPanel(cardLayout);
 
@@ -84,6 +86,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     }
 
+    // Method to create Login Panel of GUi
     public void addLoginPanel() {
         JPanel loginPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -94,7 +97,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 BorderFactory.createTitledBorder("Login"),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
-       // loginPanel.setBorder(BorderFactory.createTitledBorder("Login"));
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
         constraints.gridx = 0;
@@ -126,6 +128,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     }
 
+    // Method to handle login request
     public void handleLogin() {
         String username = usernameField.getText();
         char[] password = passwordField.getPassword();
@@ -155,6 +158,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         // cardLayout.show(panels, "Profile")
     }
 
+    // Method to make Create Account panel for GUI
     public void addAccountCreationPanel() {
         JPanel createPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -203,6 +207,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         panels.add(createPanel, "CreateAccount");
     }
 
+    // Method to handle Create Account request
     public void handleCreateAccount() {
         String username = usernameField.getText();
         char[] password = passwordField.getPassword();
@@ -241,6 +246,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         // cardLayout.show(panels, "Profile")
     }
 
+    // Methodto set look an feel of GUI
     public static void setLookAndFeel() {
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
