@@ -277,6 +277,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         JFrame frame = new JFrame(receiveName);
         Conversation conversation = new Conversation(user, receiveUser);
         conversation.readMessages();
+        //initialize the conversation and read the saved previous messages.
+        
         ArrayList<Message> messages = conversation.getMessages();
         int counts = messages.size();
         messageArea.setLineWrap(true);
@@ -292,7 +294,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             String previousMessage = sender + ": \n" + contentBefore + "\n" + date + "\n\n";
             messageArea.append(previousMessage);
         }
-        //load the previous message to the messageArea
+        //load the previous message to the messageArea.
+        
         JScrollPane scrollPane = new JScrollPane(messageArea);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -312,6 +315,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         panel2.add(deleteButton, BorderLayout.EAST);
         frame.add(panel2, BorderLayout.NORTH);
         frame.setVisible(true);
+        //add buttons, the place for your messageInput, and the area to show the conversation to the JFrame.
+        
         sendButton.addActionListener(e -> {
             String content = messageField.getText();
             if (content != null) {
@@ -332,7 +337,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                         String contentBefore = messages.get(size - 1).getContent();
                         Date date = messages.get(size - 1).getTimestamp();
                         String messageNow = sender + ": \n" + contentBefore + "\n" + date + "\n\n";
+                        messageArea.append(messageNow);
                     }
+                    //print the message if it is sent successfully or throw an error message.
                 }
             }
         });
