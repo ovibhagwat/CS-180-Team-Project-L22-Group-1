@@ -281,6 +281,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         
         ArrayList<Message> messages = conversation.getMessages();
         int counts = messages.size();
+        messageArea = new JTextArea();
         messageArea.setLineWrap(true);
         messageArea.setEditable(false);
         messageArea.setWrapStyleWord(true);
@@ -310,9 +311,13 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         JPanel panel2 = new JPanel();
         exitButton = new JButton("<- Back");
         deleteButton = new JButton("Delete");
+        profileButton = new JButton("Profile");
         panel2.setLayout(new BorderLayout());
-        panel2.add(exitButton, BorderLayout.WEST);
-        panel2.add(deleteButton, BorderLayout.EAST);
+        JPanel panel4 = new JPanel();
+        panel4.add(deleteButton);
+        panel4.add(profileButton);
+        panel2.add(exitButton, BorderLayout.WEST)
+        panel2.add(panel4, BorderLayout.EAST);
         frame.add(panel2, BorderLayout.NORTH);
         frame.setVisible(true);
         //add buttons, the place for your messageInput, and the area to show the conversation to the JFrame.
@@ -331,7 +336,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
                         JOptionPane.showMessageDialog(this, "Failed to send message: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
+                    } else if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS){
                         int size = conversation.getMessages().size();
                         String sender = messages.get(size - 1).getSender();
                         String contentBefore = messages.get(size - 1).getContent();
@@ -343,8 +348,36 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 }
             }
         });
+
+        deleteButton.addActionListener(e -> {
+            
+        });
+
+        exitButton.addActionListener(e -> {
+
+        });
+
+        profileButton.addActionListener(e -> {
+            JFrame profile = new JFrame(receiveName);
+            profile.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            profile.setSize(800, 600);
+            JTextArea text = new JTextArea();
+            text.setLineWrap(true);
+            text.setEditable(false);
+            text.setWrapStyleWord(true);
+            Insets inset = messageArea.getInsets();
+            Insets margins = new Insets(inset.top, inset.left, inset.bottom, inset.right);
+            text.setMargin(margins);
+            text.append(receiveUser.getUserProfile());
+            JScrollPane scroll = new JScrollPane(text);
+            JPanel panel3 = new JPanel();
+            panel3.setLayout(new BorderLayout());
+            panel3.add(scroll);
+            profile.add(panel3, BorderLayout.CENTER);
+            profile.setVisible(true);
+        });
         frame.setVisible(true);
-    } 
+    }
     
     // Method to close the client connection
     public void close() {
