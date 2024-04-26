@@ -309,6 +309,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         panel1.add(sendButton, BorderLayout.EAST);
         frame.add(scrollPane, BorderLayout.CENTER);
         frame.add(panel1, BorderLayout.SOUTH);
+        
         JPanel panel2 = new JPanel();
         exitButton = new JButton("<- Back");
         deleteButton = new JButton("Delete");
