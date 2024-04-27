@@ -274,6 +274,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     }
 
     public void openMessageGui(User receiveUser) {
+        user = new User("JohnLiu", "1234", "JohnLiu.txt");
         String receiveName = receiveUser.getUserName();
         JFrame frame = new JFrame(receiveName);
         Conversation conversation = new Conversation(user, receiveUser);
@@ -309,7 +310,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         panel1.add(sendButton, BorderLayout.EAST);
         frame.add(scrollPane, BorderLayout.CENTER);
         frame.add(panel1, BorderLayout.SOUTH);
-        
         JPanel panel2 = new JPanel();
         exitButton = new JButton("<- Back");
         deleteButton = new JButton("Delete");
@@ -351,9 +351,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             }
         });
 
-        deleteButton.addActionListener(e -> {
-            
-        });
+        deleteButton.addActionListener(e -> deleteMessage());
 
         exitButton.addActionListener(e -> {
 
@@ -379,6 +377,51 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             profile.setVisible(true);
         });
         frame.setVisible(true);
+    }
+
+    private void deleteMessage() {
+        int selectionStart = messageArea.getSelectionStart();
+        int selectionEnd = messageArea.getSelectionEnd();
+
+        if (selectionStart != -1 && selectionEnd != -1) {
+            String text = messageArea.getText();
+        
+            // Adjust start position to include any leading whitespace or empty lines
+            while (selectionStart > 0 && (text.charAt(selectionStart - 1) == '\n' || text.charAt(selectionStart - 1) == ' ' || text.charAt(selectionStart - 1) == '\t')) {
+                selectionStart--;
+            }
+
+            // Adjust end position to include any trailing whitespace or empty lines
+            while (selectionEnd < text.length() && (text.charAt(selectionEnd) == '\n' || text.charAt(selectionEnd) == ' ' || text.charAt(selectionEnd) == '\t')) {
+                selectionEnd++;
+            }
+        
+            // Check if selection starts at the beginning of a line
+            boolean startsAtLineStart = selectionStart == 0 || text.charAt(selectionStart - 1) == '\n';
+
+            // Check if selection ends at the end of a line
+            boolean endsAtLineEnd = selectionEnd == text.length() || text.charAt(selectionEnd) == '\n';
+
+            // Modify newText based on whether selection starts at the beginning of a line
+            String newText;
+            if (startsAtLineStart && !endsAtLineEnd) {
+                newText = text.substring(selectionEnd); // Exclude the selected text without appending a newline
+            } else {
+                newText = text.substring(0, selectionStart) + "\n" + text.substring(selectionEnd);
+            }
+
+            messageArea.setText(newText);
+
+            // Set caret position to the start of the deleted line
+            try {
+                int startOfLine = Utilities.getRowStart(messageArea, selectionStart);
+                messageArea.setCaretPosition(startOfLine);
+            } catch (BadLocationException e) {
+                // If an exception occurs, set the caret position to the end of the text
+                messageArea.setCaretPosition(messageArea.getText().length());
+                e.printStackTrace();
+            }
+        }
     }
     
     // Method to close the client connection
