@@ -95,7 +95,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     }
 
     // Method to create Login Panel of GUi
-    public void addLoginPanel() {
+public void addLoginPanel() {
         JPanel loginPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -129,8 +129,17 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridy = 3;
         loginPanel.add(switchToCreateButton, constraints);
 
+        JButton forgotPasswordButton = new JButton("Forgot Password?");
+        constraints.gridy = 4;
+        loginPanel.add(forgotPasswordButton, constraints);
+
         loginButton.addActionListener(e -> handleLogin());
-        switchToCreateButton.addActionListener(e -> cardLayout.show(panels, "CreateAccount"));
+        switchToCreateButton.addActionListener(e -> {
+            cardLayout.show(panels, "CreateAccount");
+            panels.revalidate();
+            panels.repaint();
+        });
+        forgotPasswordButton.addActionListener(e -> cardLayout.show(panels, "ChangePassword"));
 
         panels.add(loginPanel, "Login");
 
@@ -252,6 +261,150 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         }
         // Example of switching to Profile panel after creating account:
         // cardLayout.show(panels, "Profile")
+    }
+
+    // Method to create Change Username panel to GUI
+    public void addChangeUsernamePanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        newUsernameField = new JTextField(20);
+        changeUsernameButton = new JButton("Change Username");
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        panel.add(new JLabel("New Username:"), constraints);
+
+        constraints.gridx = 1;
+        panel.add(newUsernameField, constraints);
+
+        constraints.gridy = 1;
+        constraints.gridwidth = 2;
+        panel.add(changeUsernameButton, constraints);
+
+        String newUser = newUsernameField.getText();
+        changeUsernameButton.addActionListener(e -> handleChangeUsername(newUser));
+
+        panels.add(panel, "ChangeUsername");
+
+    }
+
+    // Method to handle change username request
+    public void handleChangeUsername(String newUsername) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("newUsername", newUsername);
+        RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_USER_NAME, params);
+        sendRequest(request);
+        RequestResponseProtocol.Response response = receiveResponse();
+        if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+            JOptionPane.showMessageDialog(null, "Username successfully updated.",
+                    "Change Username", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Failed to update username: " + response.getErrorCode(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Method to create change password panel of GUI
+    public void addChangePasswordPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        JTextField usernameResetField = new JTextField(20);
+        newPasswordField = new JPasswordField(20);
+        changePasswordButton = new JButton("Reset Password");
+        JButton backButton = new JButton("Back to Login");
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        panel.add(new JLabel("Username:"), constraints);
+
+        constraints.gridx = 1;
+        panel.add(usernameResetField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        panel.add(new JLabel("New Password:"), constraints);
+
+        constraints.gridx = 1;
+        panel.add(newPasswordField, constraints);
+
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        panel.add(changePasswordButton, constraints);
+
+        constraints.gridy = 3;
+        panel.add(backButton, constraints);
+
+        changePasswordButton.addActionListener(e ->
+                handleChangePassword(usernameResetField.getText(), new String(newPasswordField.getPassword())));
+        backButton.addActionListener(e -> cardLayout.show(panels, "Login"));
+
+        panels.add(panel, "ChangePassword");
+    }
+
+    // Method to handle change password request
+    public void handleChangePassword(String username, String newPassword) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("user", username);
+        params.put("newPassword", newPassword);
+        RequestResponseProtocol.Request request =
+                new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_PASSWORD, params);
+        sendRequest(request);
+        RequestResponseProtocol.Response response = receiveResponse();
+        if (response != null && response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+            JOptionPane.showMessageDialog(null, "Password reset successfully.",
+                    "Password Reset", JOptionPane.INFORMATION_MESSAGE);
+            cardLayout.show(panels, "Login");
+        } else {
+            assert response != null;
+            JOptionPane.showMessageDialog(null, "Failed to reset password: " + response.getErrorCode(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Method to create Change Profile panel of GUI
+    public void addChangeProfilePanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        newProfileArea = new JTextArea(5, 20);
+        changeProfileButton = new JButton("Update Profile");
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridwidth = 2;
+        panel.add(new JScrollPane(newProfileArea), constraints);
+
+        constraints.gridy = 1;
+        panel.add(changePasswordButton, constraints);
+
+        changeProfileButton.addActionListener(e -> handleChangeProfile(newProfileArea.getText()));
+
+        panels.add(panel, "ChangeProfile");
+    }
+
+    // Method to handle change profile request
+    public void handleChangeProfile(String newProfile) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("newProfile", newProfile);
+        RequestResponseProtocol.Request request =
+                new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_PROFILE, params);
+        sendRequest(request);
+        RequestResponseProtocol.Response response = receiveResponse();
+        if (response != null && response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+            JOptionPane.showMessageDialog(null, "Profile updated successfully.",
+                    "Profile Update", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            assert response != null;
+            JOptionPane.showMessageDialog(null, "Failed to update profile: " + response.getErrorCode(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     // Methodto set look an feel of GUI
