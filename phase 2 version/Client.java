@@ -31,6 +31,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private CardLayout cardLayout;
     private JPanel panels;
     private JTextArea messageArea;
+    private JTextField loginUsernameField;
     private JTextField usernameField;
     private JTextField friendIDField;
     private JTextField blockIDField;
@@ -48,6 +49,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private JButton exitButton;
     private JButton deleteButton;
     private JButton profileButton;
+    private JPasswordField loginPasswordField;
     private JPasswordField passwordField;
     private JPasswordField passwordField2;
     private JPasswordField newPasswordField;
@@ -113,7 +115,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     }
 
-    // Method to create Login Panel of GUi
+    // Method to create Login Panel of GUI
     public void addLoginPanel() {
         JPanel loginPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -124,20 +126,20 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 BorderFactory.createTitledBorder("Login"),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
-        usernameField = new JTextField(20);
-        passwordField = new JPasswordField(20);
+        loginUsernameField = new JTextField(20);
+        loginPasswordField = new JPasswordField(20);
         constraints.gridx = 0;
         constraints.gridy = 0;
         loginPanel.add(new JLabel("Username"), constraints);
 
         constraints.gridx = 1;
-        loginPanel.add(usernameField, constraints);
+        loginPanel.add(loginUsernameField, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 1;
         loginPanel.add(new JLabel("Password"), constraints);
         constraints.gridx = 1;
-        loginPanel.add(passwordField, constraints);
+        loginPanel.add(loginPasswordField, constraints);
         JButton loginButton = new JButton("Login");
         constraints.gridx = 0;
         constraints.gridy = 2;
@@ -166,9 +168,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     // Method to handle login request
     public void handleLogin() {
-        String username = usernameField.getText();
-        char[] password = passwordField.getPassword();
-
+        String username = loginUsernameField.getText();
+        char[] password = loginPasswordField.getPassword();
+        System.out.println(username);
         // Prepare request parameters
         Map<String, Object> params = new HashMap<>();
         params.put("accountID", username);
@@ -214,7 +216,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
         constraints.gridx = 0;
         constraints.gridy = 0;
-        createPanel.add(new JLabel("Set Username"), constraints);
+        createPanel.add(new JLabel("Set AccountID"), constraints);
         constraints.gridx = 1;
         createPanel.add(usernameField, constraints);
 
@@ -251,7 +253,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         String username = usernameField.getText();
         char[] password = passwordField.getPassword();
         char[] password2 = passwordField2.getPassword();
-
         if (!Arrays.equals(password, password2)) {
             JOptionPane.showMessageDialog(null, "Passwords must match!",
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -259,7 +260,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             passwordField2.setText("");
             return;
         }
-
         // Prepare request parameters
         Map<String, Object> params = new HashMap<>();
         params.put("accountID", username);
@@ -267,11 +267,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CREATE_ACCOUNT, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        System.out.println(response.getType());
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
                 user = (User) response.getData();
-                System.out.println("account success");
                 JOptionPane.showMessageDialog(this, "Login successful!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 cardLayout.show(panels, "Login");
@@ -318,10 +316,12 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     // Method to handle change username request
     public void handleChangeUsername(String newUsername) {
         Map<String, Object> params = new HashMap<>();
-        params.put("newUsername", newUsername);
+        params.put("user", user);
+        params.put("newName", newUsername);
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_USER_NAME, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
+        System.out.println();
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
                 user = (User) response.getData();
@@ -435,11 +435,11 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
                 user = (User) response.getData();
-               JOptionPane.showMessageDialog(null, "Profile updated successfully.",
-                       "Profile Update", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Profile updated successfully.",
+                        "Profile Update", JOptionPane.INFORMATION_MESSAGE);
             } else {
-               JOptionPane.showMessageDialog(null, "Failed to update profile: " + response.getErrorCode(),
-                       "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to update profile: " + response.getErrorCode(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(null, "No response from server.",
@@ -543,7 +543,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
             } else {
                 JOptionPane.showMessageDialog(this, "Please choose a friend!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
@@ -638,7 +638,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
             } else {
                 JOptionPane.showMessageDialog(this, "Please enter a friend ID!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
@@ -671,10 +671,10 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         confirmButton.addActionListener(e -> {
             String accountID = (String) friendComboBox.getSelectedItem();
             if (accountID != null && !accountID.equals("")) {
-                
+
             } else {
                 JOptionPane.showMessageDialog(this, "Please choose a friend!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
@@ -710,7 +710,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
             } else {
                 JOptionPane.showMessageDialog(this, "Please enter a user ID!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
@@ -746,7 +746,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
             } else {
                 JOptionPane.showMessageDialog(this, "Please choose a user!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
