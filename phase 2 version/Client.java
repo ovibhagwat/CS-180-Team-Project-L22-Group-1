@@ -33,6 +33,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private JTextArea messageArea;
     private JTextField usernameField;
     private JTextField friendIDField;
+    private JTextField blockIDField;
     private JTextField messageField;
     private JTextField newUsernameField;
     private JTextArea newProfileArea;
@@ -483,7 +484,6 @@ public void addLoginPanel() {
     }
 
     public void showChatPanel() {
-        user = new User("asdf", "1234", "asdf.txt");
         JPanel chatPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -736,6 +736,6 @@ public void addLoginPanel() {
         // Create a client instance and connect to the server
         Client client = new Client("localhost", 4242);
         setLookAndFeel();
-        SwingUtilities.invokeLater(client::createMainGUI);
+        SwingUtilities.invokeLater(client::createAndShowGUI);
     }
 }
