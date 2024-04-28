@@ -506,6 +506,48 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         panels.add(mainPanel, "MainPage");
     }
 
+    public void createMainGUI() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        cardLayout = new CardLayout();
+        panels = new JPanel(cardLayout);
+        addMainPanel();
+
+        frame.add(panels);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    public void addMainPanel() {
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("MainPage"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        chooseFriendButton = new JButton("Start a chat!");
+        mainPanel.add(chooseFriendButton, constraints);
+        constraints.gridy = 3;
+        modifyFriendButton = new JButton("Modify Friends");
+        mainPanel.add(modifyFriendButton, constraints);
+        constraints.gridy = 4;
+        modifyBlockButton = new JButton("Modify your Block List");
+        mainPanel.add(modifyBlockButton, constraints);
+
+        chooseFriendButton.addActionListener(e -> showChatPanel());
+        modifyBlockButton.addActionListener(e -> showBlockPanel());
+        modifyFriendButton.addActionListener(e -> showFriendPanel());
+
+        panels.add(mainPanel, "MainPage");
+    }
+
     public void showChatPanel() {
         JPanel chatPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -517,12 +559,13 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
         constraints.gridx = 0;
+        chatPanel.add(new JLabel("Choose a friend to start!"), constraints);
         constraints.gridy = 2;
         constraints.gridwidth = 2;
         JComboBox<String> friendComboBox = new JComboBox<>(user.getFriendsList().toArray(new String[0]));
         chatPanel.add(friendComboBox, constraints);
         constraints.gridy = 3;
-        JButton startChatButton = new JButton("Choose a friend to start!");
+        JButton startChatButton = new JButton("Confirm");
         chatPanel.add(startChatButton, constraints);
         constraints.gridy = 4;
         JButton returnButton = new JButton("Return to previous page");
@@ -555,8 +598,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         JButton returnButton = new JButton("Return to previous page");
         blockPanel.add(returnButton, constraints);
 
-        addBlockButton.addActionListener(e -> {});
-        removeBlockButton.addActionListener(e -> {});
+        addBlockButton.addActionListener(e -> addBlockPanel());
+        removeBlockButton.addActionListener(e -> removeBlockPanel());
         returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
         panels.add(blockPanel, "Block");
         cardLayout.show(panels, "Block");
@@ -569,26 +612,135 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.insets = new Insets(10, 10, 10, 10);
 
         friendPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("modifyBlock"),
+                BorderFactory.createTitledBorder("modifyFriend"),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.gridwidth = 2;
-        JButton addFriendButton = new JButton("Add someone to Blocklist");
+        JButton addFriendButton = new JButton("Add someone to Friendlist");
         friendPanel.add(addFriendButton, constraints);
         constraints.gridy = 3;
-        JButton removeFriendButton = new JButton("Remove someone from Blocklist");
+        JButton removeFriendButton = new JButton("Remove someone from Friendlist");
         friendPanel.add(removeFriendButton, constraints);
         constraints.gridy = 4;
         JButton returnButton = new JButton("Return to previous page");
         friendPanel.add(returnButton, constraints);
 
-        addFriendButton.addActionListener(e -> {});
-        removeFriendButton.addActionListener(e -> {});
+        addFriendButton.addActionListener(e -> addFriendPanel());
+        removeFriendButton.addActionListener(e -> removeFriendPanel());
         returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
         panels.add(friendPanel, "Friend");
         cardLayout.show(panels, "Friend");
+    }
+
+    public void addFriendPanel() {
+        JPanel addFPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        addFPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("add a friend!"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        addFPanel.add(new JLabel("Please enter your friend's ID"), constraints);
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        friendIDField = new JTextField();
+        addFPanel.add(friendIDField, constraints);
+        constraints.gridy = 3;
+        JButton confirmButton = new JButton("Confirm");
+        addFPanel.add(confirmButton, constraints);
+        constraints.gridy = 4;
+        JButton returnButton = new JButton("Return to previous page");
+        addFPanel.add(returnButton, constraints);
+        returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
+        panels.add(addFPanel, "addF");
+        cardLayout.show(panels, "addF");
+    }
+
+    public void removeFriendPanel() {
+        JPanel rFPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        rFPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("remove a friend!"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        rFPanel.add(new JLabel("Select the friend you want to remove."), constraints);
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        JComboBox<String> friendComboBox = new JComboBox<>(user.getFriendsList().toArray(new String[0]));
+        rFPanel.add(friendComboBox, constraints);
+        constraints.gridy = 3;
+        JButton confirmButton = new JButton("Confirm");
+        rFPanel.add(confirmButton, constraints);
+        constraints.gridy = 4;
+        JButton returnButton = new JButton("Return to previous page");
+        rFPanel.add(returnButton, constraints);
+        returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
+        panels.add(rFPanel, "removeF");
+        cardLayout.show(panels, "removeF");
+    }
+
+    public void addBlockPanel() {
+        JPanel addBPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        addBPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("add a block!"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        addBPanel.add(new JLabel("Please enter the ID you want to block"), constraints);
+        constraints.gridy = 2;
+        friendIDField = new JTextField();
+        addBPanel.add(friendIDField, constraints);
+        constraints.gridwidth = 2;
+        constraints.gridy = 3;
+        JButton confirmButton = new JButton("Confirm");
+        addBPanel.add(confirmButton, constraints);
+        constraints.gridy = 4;
+        JButton returnButton = new JButton("Return to previous page");
+        addBPanel.add(returnButton, constraints);
+        returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
+        panels.add(addBPanel, "addB");
+        cardLayout.show(panels, "addB");
+    }
+
+    public void removeBlockPanel() {
+        JPanel rBPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        rBPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("add a friend!"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        rBPanel.add(new JLabel("Please select the ID you want to remove from block"), constraints);
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        JComboBox<String> friendComboBox = new JComboBox<>(user.getBlockList().toArray(new String[0]));
+        rBPanel.add(friendComboBox, constraints);
+        constraints.gridy = 3;
+        JButton confirmButton = new JButton("Confirm");
+        rBPanel.add(confirmButton, constraints);
+        constraints.gridy = 4;
+        JButton returnButton = new JButton("Return to previous page");
+        rBPanel.add(returnButton, constraints);
+        returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
+        panels.add(rBPanel, "rB");
+        cardLayout.show(panels, "rB");
     }
 
     public void openMessageGui(User receiveUser) {
