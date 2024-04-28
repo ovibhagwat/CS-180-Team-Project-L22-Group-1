@@ -11,6 +11,8 @@ import java.util.Map;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.ArrayList;
+import javax.swing.text.Utilities;
+import javax.swing.text.BadLocationException;
 /**
  * A program that implements Client class
  *
