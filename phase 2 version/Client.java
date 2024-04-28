@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.ArrayList;
 import javax.swing.text.Utilities;
 import javax.swing.text.BadLocationException;
+
 /**
  * A program that implements Client class
  *
@@ -31,13 +32,23 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private JPanel panels;
     private JTextArea messageArea;
     private JTextField usernameField;
+    private JTextField friendIDField;
     private JTextField messageField;
-    private JPasswordField passwordField;
-    private JPasswordField passwordField2;
+    private JTextField newUsernameField;
+    private JTextArea newProfileArea;
+    private JButton changeUsernameButton;
+    private JButton changePasswordButton;
+    private JButton changeProfileButton;
+    private JButton chooseFriendButton;
+    private JButton modifyFriendButton;
+    private JButton modifyBlockButton;
     private JButton sendButton;
     private JButton exitButton;
     private JButton deleteButton;
     private JButton profileButton;
+    private JPasswordField passwordField;
+    private JPasswordField passwordField2;
+    private JPasswordField newPasswordField;
     private JScrollPane scrollPane;
 
 
@@ -428,8 +439,136 @@ public void addLoginPanel() {
         }
     }
 
+    public void createMainGUI() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        cardLayout = new CardLayout();
+        panels = new JPanel(cardLayout);
+
+        addMainPanel();
+
+        frame.add(panels);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    public void addMainPanel() {
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("MainPage"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        chooseFriendButton = new JButton("Start a chat!");
+        mainPanel.add(chooseFriendButton, constraints);
+        constraints.gridy = 3;
+        modifyFriendButton = new JButton("Modify Friends");
+        mainPanel.add(modifyFriendButton, constraints);
+        constraints.gridy = 4;
+        modifyBlockButton = new JButton("Modify your Block List");
+        mainPanel.add(modifyBlockButton, constraints);
+
+        chooseFriendButton.addActionListener(e -> showChatPanel());
+        modifyBlockButton.addActionListener(e -> showBlockPanel());
+        modifyFriendButton.addActionListener(e -> showFriendPanel());
+
+        panels.add(mainPanel, "MainPage");
+    }
+
+    public void showChatPanel() {
+        user = new User("asdf", "1234", "asdf.txt");
+        JPanel chatPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        chatPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("modifyBlock"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        JComboBox<String> friendComboBox = new JComboBox<>(user.getFriendsList().toArray(new String[0]));
+        chatPanel.add(friendComboBox, constraints);
+        constraints.gridy = 3;
+        JButton startChatButton = new JButton("Choose a friend to start!");
+        chatPanel.add(startChatButton, constraints);
+        constraints.gridy = 4;
+        JButton returnButton = new JButton("Return to previous page");
+        chatPanel.add(returnButton, constraints);
+        startChatButton.addActionListener(e -> {});
+        returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
+        panels.add(chatPanel, "Chat");
+        cardLayout.show(panels, "Chat");
+    }
+
+    public void showBlockPanel() {
+        JPanel blockPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        blockPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("modifyBlock"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        JButton addBlockButton = new JButton("Add someone to Blocklist");
+        blockPanel.add(addBlockButton, constraints);
+        constraints.gridy = 3;
+        JButton removeBlockButton = new JButton("Remove someone from Blocklist");
+        blockPanel.add(removeBlockButton, constraints);
+        constraints.gridy = 4;
+        JButton returnButton = new JButton("Return to previous page");
+        blockPanel.add(returnButton, constraints);
+
+        addBlockButton.addActionListener(e -> {});
+        removeBlockButton.addActionListener(e -> {});
+        returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
+        panels.add(blockPanel, "Block");
+        cardLayout.show(panels, "Block");
+    }
+
+    public void showFriendPanel() {
+        JPanel friendPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        friendPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("modifyBlock"),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        JButton addFriendButton = new JButton("Add someone to Blocklist");
+        friendPanel.add(addFriendButton, constraints);
+        constraints.gridy = 3;
+        JButton removeFriendButton = new JButton("Remove someone from Blocklist");
+        friendPanel.add(removeFriendButton, constraints);
+        constraints.gridy = 4;
+        JButton returnButton = new JButton("Return to previous page");
+        friendPanel.add(returnButton, constraints);
+
+        addFriendButton.addActionListener(e -> {});
+        removeFriendButton.addActionListener(e -> {});
+        returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
+        panels.add(friendPanel, "Friend");
+        cardLayout.show(panels, "Friend");
+    }
+
     public void openMessageGui(User receiveUser) {
-        user = new User("JohnLiu", "1234", "JohnLiu.txt");
         String receiveName = receiveUser.getUserName();
         JFrame frame = new JFrame(receiveName);
         Conversation conversation = new Conversation(user, receiveUser);
@@ -597,6 +736,6 @@ public void addLoginPanel() {
         // Create a client instance and connect to the server
         Client client = new Client("localhost", 4242);
         setLookAndFeel();
-        SwingUtilities.invokeLater(client::createAndShowGUI);
+        SwingUtilities.invokeLater(client::createMainGUI);
     }
 }
