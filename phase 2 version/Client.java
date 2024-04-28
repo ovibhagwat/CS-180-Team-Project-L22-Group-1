@@ -43,6 +43,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private JButton chooseFriendButton;
     private JButton modifyFriendButton;
     private JButton modifyBlockButton;
+    private JButton logoutButton;
     private JButton sendButton;
     private JButton exitButton;
     private JButton deleteButton;
@@ -180,7 +181,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 user = (User) response.getData();
                 JOptionPane.showMessageDialog(this, "Login successful!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
-                cardLayout.show(panels, "MainPage");
+                JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
+                welcomeFrame.dispose();
+                createMainGUI();
             } else if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
                 JOptionPane.showMessageDialog(this, "Login failed: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -469,6 +472,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         frame.setSize(400, 300);
         cardLayout = new CardLayout();
         panels = new JPanel(cardLayout);
+        user = new User("1234", "1234", "1234.txt");
         addMainPanel();
 
         frame.add(panels);
@@ -487,17 +491,23 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
         constraints.gridx = 0;
-        constraints.gridy = 2;
+        constraints.gridy = 1;
         constraints.gridwidth = 2;
         chooseFriendButton = new JButton("Start a chat!");
         mainPanel.add(chooseFriendButton, constraints);
-        constraints.gridy = 3;
+        constraints.gridy = 2;
         modifyFriendButton = new JButton("Modify Friends");
         mainPanel.add(modifyFriendButton, constraints);
-        constraints.gridy = 4;
+        constraints.gridy = 3;
         modifyBlockButton = new JButton("Modify your Block List");
         mainPanel.add(modifyBlockButton, constraints);
-
+        constraints.gridy = 4;
+        logoutButton = new JButton("Logout");
+        mainPanel.add(logoutButton, constraints);
+        logoutButton.addActionListener(e -> {
+            JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
+            welcomeFrame.dispose();
+        });
         chooseFriendButton.addActionListener(e -> showChatPanel());
         modifyBlockButton.addActionListener(e -> showBlockPanel());
         modifyFriendButton.addActionListener(e -> showFriendPanel());
@@ -661,7 +671,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         confirmButton.addActionListener(e -> {
             String accountID = (String) friendComboBox.getSelectedItem();
             if (accountID != null && !accountID.equals("")) {
-
+                
             } else {
                 JOptionPane.showMessageDialog(this, "Please choose a friend!",
                                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -743,6 +753,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         panels.add(rBPanel, "rB");
         cardLayout.show(panels, "rB");
     }
+
     public void openMessageGui(User receiveUser) {
         String receiveName = receiveUser.getUserName();
         JFrame frame = new JFrame(receiveName);
