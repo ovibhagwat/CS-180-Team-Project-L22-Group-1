@@ -469,49 +469,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         frame.setSize(400, 300);
         cardLayout = new CardLayout();
         panels = new JPanel(cardLayout);
-
-        addMainPanel();
-
-        frame.add(panels);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
-    public void addMainPanel() {
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.insets = new Insets(10, 10, 10, 10);
-
-        mainPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("MainPage"),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
-
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.gridwidth = 2;
-        chooseFriendButton = new JButton("Start a chat!");
-        mainPanel.add(chooseFriendButton, constraints);
-        constraints.gridy = 3;
-        modifyFriendButton = new JButton("Modify Friends");
-        mainPanel.add(modifyFriendButton, constraints);
-        constraints.gridy = 4;
-        modifyBlockButton = new JButton("Modify your Block List");
-        mainPanel.add(modifyBlockButton, constraints);
-
-        chooseFriendButton.addActionListener(e -> showChatPanel());
-        modifyBlockButton.addActionListener(e -> showBlockPanel());
-        modifyFriendButton.addActionListener(e -> showFriendPanel());
-
-        panels.add(mainPanel, "MainPage");
-    }
-
-    public void createMainGUI() {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
-        cardLayout = new CardLayout();
-        panels = new JPanel(cardLayout);
         addMainPanel();
 
         frame.add(panels);
