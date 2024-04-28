@@ -527,7 +527,15 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridy = 4;
         JButton returnButton = new JButton("Return to previous page");
         chatPanel.add(returnButton, constraints);
-        startChatButton.addActionListener(e -> {});
+        startChatButton.addActionListener(e -> {
+            String accountID = (String) friendComboBox.getSelectedItem();
+            if (accountID != null && !accountID.equals("")) {
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Please choose a friend!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
         panels.add(chatPanel, "Chat");
         cardLayout.show(panels, "Chat");
@@ -614,6 +622,15 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridy = 4;
         JButton returnButton = new JButton("Return to previous page");
         addFPanel.add(returnButton, constraints);
+        confirmButton.addActionListener(e -> {
+            String accountID = friendIDField.getText();
+            if (!accountID.isEmpty()) {
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Please enter a friend ID!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
         panels.add(addFPanel, "addF");
         cardLayout.show(panels, "addF");
@@ -641,6 +658,15 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridy = 4;
         JButton returnButton = new JButton("Return to previous page");
         rFPanel.add(returnButton, constraints);
+        confirmButton.addActionListener(e -> {
+            String accountID = (String) friendComboBox.getSelectedItem();
+            if (accountID != null && !accountID.equals("")) {
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Please choose a friend!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
         panels.add(rFPanel, "removeF");
         cardLayout.show(panels, "removeF");
@@ -659,8 +685,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridx = 0;
         addBPanel.add(new JLabel("Please enter the ID you want to block"), constraints);
         constraints.gridy = 2;
-        friendIDField = new JTextField();
-        addBPanel.add(friendIDField, constraints);
+        blockIDField = new JTextField();
+        addBPanel.add(blockIDField, constraints);
         constraints.gridwidth = 2;
         constraints.gridy = 3;
         JButton confirmButton = new JButton("Confirm");
@@ -668,6 +694,15 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridy = 4;
         JButton returnButton = new JButton("Return to previous page");
         addBPanel.add(returnButton, constraints);
+        confirmButton.addActionListener(e -> {
+            String accountID = blockIDField.getText();
+            if (!accountID.isEmpty()) {
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Please enter a user ID!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
         panels.add(addBPanel, "addB");
         cardLayout.show(panels, "addB");
@@ -695,11 +730,19 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridy = 4;
         JButton returnButton = new JButton("Return to previous page");
         rBPanel.add(returnButton, constraints);
+        confirmButton.addActionListener(e -> {
+            String accountID = (String) friendComboBox.getSelectedItem();
+            if (accountID != null && !accountID.equals("")) {
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Please choose a user!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
         panels.add(rBPanel, "rB");
         cardLayout.show(panels, "rB");
     }
-
     public void openMessageGui(User receiveUser) {
         String receiveName = receiveUser.getUserName();
         JFrame frame = new JFrame(receiveName);
