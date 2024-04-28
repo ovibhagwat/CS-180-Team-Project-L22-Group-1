@@ -514,9 +514,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         frame.setUndecorated(true);
         cardLayout = new CardLayout();
         panels = new JPanel(cardLayout);
-        user = new User("1234", "1234", "1234.txt");
-        user.changeUserName("Name");
-        user.changeUserProfile("Happy :)");
+//        user = new User("1234", "1234", "1234.txt");
+//        user.changeUserName("Name");
+//        user.changeUserProfile("Happy :)");
         addMainPanel();
 
         frame.add(panels);
