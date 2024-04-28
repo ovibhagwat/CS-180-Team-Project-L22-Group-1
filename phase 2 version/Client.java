@@ -101,6 +101,10 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
         addLoginPanel();
         addAccountCreationPanel();
+        addChangeUsernamePanel();
+        addChangePasswordPanel();
+        addChangeProfilePanel();
+        addMainPanel();
 
         frame.add(panels);
         frame.setLocationRelativeTo(null);
@@ -109,7 +113,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     }
 
     // Method to create Login Panel of GUi
-public void addLoginPanel() {
+    public void addLoginPanel() {
         JPanel loginPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -172,10 +176,11 @@ public void addLoginPanel() {
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
         if (response != null) {
-            if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+            if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
                 user = (User) response.getData();
                 JOptionPane.showMessageDialog(this, "Login successful!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
+                cardLayout.show(panels, "MainPage");
             } else if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
                 JOptionPane.showMessageDialog(this, "Login failed: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -259,11 +264,14 @@ public void addLoginPanel() {
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CREATE_ACCOUNT, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
+        System.out.println(response.getType());
         if (response != null) {
-            if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+            if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
                 user = (User) response.getData();
+                System.out.println("account success");
                 JOptionPane.showMessageDialog(this, "Login successful!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
+                cardLayout.show(panels, "Login");
             } else if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
                 JOptionPane.showMessageDialog(this, "Login failed: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -311,11 +319,17 @@ public void addLoginPanel() {
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_USER_NAME, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
-            JOptionPane.showMessageDialog(null, "Username successfully updated.",
-                    "Change Username", JOptionPane.INFORMATION_MESSAGE);
+        if (response != null) {
+            if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+                user = (User) response.getData();
+                JOptionPane.showMessageDialog(null, "Username successfully updated.",
+                        "Change Username", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Failed to update username: " + response.getErrorCode(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            JOptionPane.showMessageDialog(null, "Failed to update username: " + response.getErrorCode(),
+            JOptionPane.showMessageDialog(null, "No response from server",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -369,13 +383,17 @@ public void addLoginPanel() {
                 new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_PASSWORD, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        if (response != null && response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
-            JOptionPane.showMessageDialog(null, "Password reset successfully.",
-                    "Password Reset", JOptionPane.INFORMATION_MESSAGE);
-            cardLayout.show(panels, "Login");
+        if (response != null) {
+            if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+                user = (User) response.getData();
+                JOptionPane.showMessageDialog(null, "Password reset successfully.",
+                        "Password Reset", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Failed to reset password: " + response.getErrorCode(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            assert response != null;
-            JOptionPane.showMessageDialog(null, "Failed to reset password: " + response.getErrorCode(),
+            JOptionPane.showMessageDialog(null, "No response from server.",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -411,17 +429,22 @@ public void addLoginPanel() {
                 new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_PROFILE, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        if (response != null && response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
-            JOptionPane.showMessageDialog(null, "Profile updated successfully.",
-                    "Profile Update", JOptionPane.INFORMATION_MESSAGE);
+        if (response != null) {
+            if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
+                user = (User) response.getData();
+               JOptionPane.showMessageDialog(null, "Profile updated successfully.",
+                       "Profile Update", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+               JOptionPane.showMessageDialog(null, "Failed to update profile: " + response.getErrorCode(),
+                       "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            assert response != null;
-            JOptionPane.showMessageDialog(null, "Failed to update profile: " + response.getErrorCode(),
+            JOptionPane.showMessageDialog(null, "No response from server.",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // Methodto set look an feel of GUI
+    // Method to set look and feel of GUI
     public static void setLookAndFeel() {
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -574,7 +597,7 @@ public void addLoginPanel() {
         Conversation conversation = new Conversation(user, receiveUser);
         conversation.readMessages();
         //initialize the conversation and read the saved previous messages.
-        
+
         ArrayList<Message> messages = conversation.getMessages();
         int counts = messages.size();
         messageArea = new JTextArea();
@@ -592,7 +615,7 @@ public void addLoginPanel() {
             messageArea.append(previousMessage);
         }
         //load the previous message to the messageArea.
-        
+
         JScrollPane scrollPane = new JScrollPane(messageArea);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -617,7 +640,7 @@ public void addLoginPanel() {
         frame.add(panel2, BorderLayout.NORTH);
         frame.setVisible(true);
         //add buttons, the place for your messageInput, and the area to show the conversation to the JFrame.
-        
+
         sendButton.addActionListener(e -> {
             String content = messageField.getText();
             if (content != null) {
@@ -631,7 +654,7 @@ public void addLoginPanel() {
                 if (response != null) {
                     if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
                         JOptionPane.showMessageDialog(this, "Failed to send message: " + response.getErrorCode(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                                "Error", JOptionPane.ERROR_MESSAGE);
                     } else if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS){
                         int size = conversation.getMessages().size();
                         String sender = messages.get(size - 1).getSender();
@@ -679,7 +702,7 @@ public void addLoginPanel() {
 
         if (selectionStart != -1 && selectionEnd != -1) {
             String text = messageArea.getText();
-        
+
             // Adjust start position to include any leading whitespace or empty lines
             while (selectionStart > 0 && (text.charAt(selectionStart - 1) == '\n' || text.charAt(selectionStart - 1) == ' ' || text.charAt(selectionStart - 1) == '\t')) {
                 selectionStart--;
@@ -689,7 +712,7 @@ public void addLoginPanel() {
             while (selectionEnd < text.length() && (text.charAt(selectionEnd) == '\n' || text.charAt(selectionEnd) == ' ' || text.charAt(selectionEnd) == '\t')) {
                 selectionEnd++;
             }
-        
+
             // Check if selection starts at the beginning of a line
             boolean startsAtLineStart = selectionStart == 0 || text.charAt(selectionStart - 1) == '\n';
 
@@ -717,7 +740,7 @@ public void addLoginPanel() {
             }
         }
     }
-    
+
     // Method to close the client connection
     public void close() {
         try {
