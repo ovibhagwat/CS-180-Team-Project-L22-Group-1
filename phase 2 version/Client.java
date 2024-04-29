@@ -106,7 +106,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         addChangeUsernamePanel();
         addChangePasswordPanel();
         addChangeProfilePanel();
-        addMainPanel();
+//        addMainPanel();
 
         frame.add(panels);
         frame.setLocationRelativeTo(null);
@@ -179,16 +179,19 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Response response = receiveResponse();
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
-                user = new User(username);
+                user = (User) response.getData();
                 JOptionPane.showMessageDialog(this, "Login successful!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
-                if (user.getUserName().isEmpty()) {
-                    SwingUtilities.invokeLater(() -> cardLayout.show(panels, "ChangeUsername"));
-                } else {
-                    JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
-                    welcomeFrame.dispose();
-                    createMainGUI();
-                }
+                JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
+                welcomeFrame.dispose();
+                createMainGUI();
+                //   if (user.getUserName().isEmpty()) {
+            //        SwingUtilities.invokeLater(() -> cardLayout.show(panels, "ChangeUsername"));
+            //    } else {
+             //       JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
+             //       welcomeFrame.dispose();
+             //       createMainGUI();
+            //    }
             } else if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
                 JOptionPane.showMessageDialog(this, "Login failed: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -334,7 +337,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                         "Change Username", JOptionPane.INFORMATION_MESSAGE);
                 JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
                 welcomeFrame.dispose();
-                createMainGUI();
+                SwingUtilities.invokeLater(this::createMainGUI);
             } else {
                 JOptionPane.showMessageDialog(null, "Failed to update username: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
