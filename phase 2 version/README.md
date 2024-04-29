@@ -30,7 +30,7 @@ README
    
    -To compile the test classes, ensuring you include the JUnit library in the classpath.
    
-   -Remember to download All of the files.
+   -Remember to download **ALL** of the files.
    
    -Compile the Java files using javac command.
    
