@@ -6,35 +6,42 @@ README
 
 ## Features:
    User Authentication: Users can log in with their account credentials to access the application features.
-   Main Panel: Upon logging in, users are greeted with the main panel, displaying their username, account ID, and profile information. From here, users can perform various actions, including:
-   Changing username
-   Changing profile
-   Starting a chat with a friend
-   Modifying friend list
-   Modifying block list
-   Logging out
+   
+   -Main Panel: Upon logging in, users are greeted with the main panel, displaying their username, account ID, and profile information. From here, users can perform various actions, including:
+   -Changing username
+   -Changing profile
+   -Starting a chat with a friend
+   -Modifying friend list
+   -Modifying block list
+   -Logging out
 ## Compilation and Execution Instructions
 **Compile the Java files:**
-   To compile, ensure you have JUnit configured in your project.
-   To compile the test classes, ensuring you include the JUnit library in the classpath.
-   Remember to download All of the files.
-   Compile the Java files using javac command.
-   Run the application using java command.
+   -To compile, ensure you have JUnit configured in your project.
+   -To compile the test classes, ensuring you include the JUnit library in the classpath.
+   -Remember to download All of the files.
+   -Compile the Java files using javac command.
+   -Run the application using java command.
 
 
-   Usage:
+   **Usage:**
 
-   Logging In: Enter your account credentials to log in to the application.
-   Main Panel: Upon successful login, you'll be directed to the main panel where you can perform various actions.
-   Chatting: Click on "Start a chat!" button to initiate a chat with a friend. You can send text messages and photo messages in the chat window.
-   Friend Management: Click on "Modify Friends" button to add or remove friends from your friend list.
-   Block Management: Click on "Modify Block" button to add or remove users from your block list.
-   Profile Management: Click on "Change Username" or "Change Profile" button to update your username or profile information.
-   Logging Out: Click on "Logout" button to log out of the application.
+   -Logging In: Enter your account credentials to log in to the application.
    
-   Credits:
+   -Main Panel: Upon successful login, you'll be directed to the main panel where you can perform various actions.
    
-   Message180 was developed by Yixin Hu, Chloe Barnes, Ovi Bhagwat and Yiyang Liu.
+   -Chatting: Click on "Start a chat!" button to initiate a chat with a friend. You can send text messages and photo messages in the chat window.
+   
+   -Friend Management: Click on "Modify Friends" button to add or remove friends from your friend list.
+  
+   -Block Management: Click on "Modify Block" button to add or remove users from your block list.
+   
+   -Profile Management: Click on "Change Username" or "Change Profile" button to update your username or profile information.
+   
+   -Logging Out: Click on "Logout" button to log out of the application.
+   
+   -Credits:
+   
+   -Message180 was developed by Yixin Hu, Chloe Barnes, Ovi Bhagwat and Yiyang Liu.
 
 # Project Phase 2
 
