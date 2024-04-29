@@ -21,7 +21,7 @@ import javax.swing.text.BadLocationException;
  *
  * <p>Purdue University -- CS18000 -- Spring 2024</p>
  *
- * @author Yixin Hu
+ * @author Yixin Hu, Chloe Barnes, Yiyang Liu, Ovi Bhagwat
  * @version April 15, 2024
  */
 
@@ -30,7 +30,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private User user;
-
     private CardLayout cardLayout;
     private JPanel panels;
     private JTextField loginAccountIDField;
@@ -40,22 +39,17 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private JTextField blockIDField;
     private JTextField newUsernameField;
     private JTextArea newProfileArea;
-    private JButton changeUsernameButton;
-    private JButton changeProfileButton;
     private JPasswordField loginPasswordField;
     private JPasswordField passwordField;
     private JPasswordField passwordField2;
     private ArrayList<Message> messages = new ArrayList<>();
-
     private Conversation conversation;
     private JPanel chatPanel;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a"); // Example format: "12:15 PM"
     private JTextField messageInputField;
+
     // Maintain a mapping between message components and their delete buttons for toggling visibility
     private Map<JComponent, JButton> deleteButtons = new HashMap<>();
-
-    private JButton sendPhotoButton;
-
     private User friend;
 
 
@@ -315,7 +309,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.insets = new Insets(10, 10, 10, 10);
 
         newUsernameField = new JTextField(20);
-        changeUsernameButton = new JButton("Change Username");
+        JButton changeUsernameButton = new JButton("Change Username");
         constraints.gridx = 0;
         constraints.gridy = 0;
         panel.add(new JLabel("New Username:"), constraints);
@@ -370,7 +364,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.insets = new Insets(10, 10, 10, 10);
 
         newProfileArea = new JTextArea(5, 20);
-        changeProfileButton = new JButton("Update Profile");
+        JButton changeProfileButton = new JButton("Update Profile");
 
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -836,6 +830,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         cardLayout.show(panels, "rB");
     }
 
+    @Override
     public String generateConversationFilename(String userOne, String userTwo) {
         String filename = "";
         if (userOne.compareTo(userTwo) < 0) {
@@ -947,7 +942,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         ImageIcon icon = new ImageIcon(scaledImage);
 
         // Use the scaled icon for the button
-        sendPhotoButton = new JButton(icon);
+        JButton sendPhotoButton = new JButton(icon);
 
         sendPhotoButton.addActionListener(e -> sendPhotoMessage());
 
@@ -959,8 +954,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
         scrollToBottom(scrollPane);
     }
-
-    private void addMessage(Message message) {
+    
+    public void addMessage(Message message) {
         JPanel messagePanel = new JPanel();
         messagePanel.setLayout(new FlowLayout(message.getSender().equals(user.getAccountID()) ? FlowLayout.RIGHT : FlowLayout.LEFT));
         messagePanel.setOpaque(false);
@@ -996,7 +991,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         chatPanel.repaint();
     }
 
-    private void toggleDeleteButton(JPanel messagePanel) {
+    public void toggleDeleteButton(JPanel messagePanel) {
         JButton deleteButton = deleteButtons.get(messagePanel);
         if (deleteButton != null) {
             boolean isVisible = deleteButton.isVisible();
@@ -1011,7 +1006,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         }
     }
 
-    private String makeHtmlMessage(Message message) {
+    public String makeHtmlMessage(Message message) {
         String formattedTime = dateFormat.format(message.getTimestamp());
         if (message.getSender().equals(user.getAccountID())) {
             return String.format("<html><div style='width: 200px;'>%s %s<br/>%s</div></html>",
@@ -1023,7 +1018,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     }
 
-    private void sendMessage() {
+    public void sendMessage() {
         String content = messageInputField.getText().trim();
         if (!content.isEmpty()) {
             Message message = new Message("text",  user.getAccountID(), friend.getAccountID(), content);
@@ -1054,7 +1049,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         }
     }
 
-    private void sendPhotoMessage() {
+    public void sendPhotoMessage() {
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "Image Files", ImageIO.getReaderFileSuffixes());
@@ -1094,7 +1089,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         }
     }
 
-    private void addPhotoMessage(PhotoMessage photoMessage) {
+    public void addPhotoMessage(PhotoMessage photoMessage) {
         JPanel messagePanel = new JPanel();
         messagePanel.setLayout(new FlowLayout(photoMessage.getSender().equals(user.getAccountID()) ? FlowLayout.RIGHT :
                 FlowLayout.LEFT));
@@ -1129,7 +1124,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         scrollToBottom((JScrollPane) chatPanel.getParent().getParent());
     }
 
-    private void showOriginalSizePhoto(PhotoMessage photoMessage) {
+    public void showOriginalSizePhoto(PhotoMessage photoMessage) {
         BufferedImage originalImage = photoMessage.getImage();
 
         // Create a JLabel to display the original size photo
@@ -1150,11 +1145,11 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     }
 
 
-    private void scrollToBottom(JScrollPane scrollPane) {
+    public void scrollToBottom(JScrollPane scrollPane) {
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum()));
     }
 
-    private void deleteMessage(JPanel messagePanel, Message message) {
+    public void deleteMessage(JPanel messagePanel, Message message) {
         Map<String, Object> params = new HashMap<>();
         params.put("conversation", conversation);
         params.put("message", message);
