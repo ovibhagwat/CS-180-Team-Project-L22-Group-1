@@ -11,11 +11,7 @@ public interface UserInterface {
 
     // Getters and setters for user properties. These methods provide controlled access to the user's data.
     String getAccountID();
-
     String getPassword();
-    void setPassword(String password);
-    void changePassword(String newPassword) throws PasswordErrorException;
-
     String getUserName();
     void setUserName(String userName);
     void changeUserName(String newUserName);
