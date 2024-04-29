@@ -528,12 +528,20 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         accountIDLabel.setForeground(Color.BLACK); // Adjust color as needed
 
         // Profile Text Area (Displays the user's profile)
-        JLabel profileTextArea = new JLabel(user.getUserProfile());
-        profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
-        profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
-        profileTextArea.setBorder(null); // Remove border for a cleaner look
-        profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
-
+           JLabel profileTextArea;
+        if (user.getUserProfile() != null) {
+            profileTextArea = new JLabel(user.getUserProfile());
+            profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
+            profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
+            profileTextArea.setBorder(null); // Remove border for a cleaner look
+            profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
+        } else {
+            profileTextArea = new JLabel("");
+            profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
+            profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
+            profileTextArea.setBorder(null); // Remove border for a cleaner look
+            profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
+        }
 
         constraints.gridx = 0;
         constraints.gridy = 0;
