@@ -53,9 +53,9 @@ README
    
    -Logging Out: Click on "Logout" button to log out of the application.
    
-   -Credits:
+   ## Credits:
    
-   -Message180 was developed by Yixin Hu, Chloe Barnes, Ovi Bhagwat and Yiyang Liu.
+   -This group Project was developed by Yixin Hu, Chloe Barnes, Ovi Bhagwat and Yiyang Liu.
 
 # Project Phase 2
 
