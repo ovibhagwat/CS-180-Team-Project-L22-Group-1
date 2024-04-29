@@ -36,7 +36,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private JTextField friendIDField;
     private JTextField blockIDField;
     private JTextField messageField;
-    private JTextField newUsernameField;
     private JTextArea newProfileArea;
     private JButton changeUsernameButton;
     private JButton changePasswordButton;
@@ -180,7 +179,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Response response = receiveResponse();
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
-                user = (User) response.getData();
+                user = new User(username);
                 JOptionPane.showMessageDialog(this, "Login successful!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 if (user.getUserName().isEmpty()) {
@@ -297,7 +296,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.insets = new Insets(10, 10, 10, 10);
 
-        newUsernameField = new JTextField(20);
+        JTextField newUsernameField = new JTextField(20);
         changeUsernameButton = new JButton("Change Username");
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -310,11 +309,12 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridwidth = 2;
         panel.add(changeUsernameButton, constraints);
 
-        String newUser = newUsernameField.getText();
-        changeUsernameButton.addActionListener(e -> handleChangeUsername(newUser));
+        changeUsernameButton.addActionListener(e -> {
+            String newUser = newUsernameField.getText();
+            handleChangeUsername(newUser);
+        });
 
         panel.setVisible(true);
-
         panels.add(panel, "ChangeUsername");
 
     }
@@ -327,7 +327,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_USER_NAME, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        System.out.println();
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
                 user = (User) response.getData();
@@ -504,7 +503,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         JLabel usernameLabel = new JLabel("Welcome Back " + user.getUserName() + "!");
         JLabel accountIDLabel = new JLabel("Account ID: " + user.getAccountID());
         JLabel profileTextArea = new JLabel(user.getUserProfile());
-//        JButton changePasswordButton = new JButton("Change Password");
+        JButton changePasswordButton = new JButton("Change Password");
 
         constraints.gridx = 0;
         constraints.gridy = 0;
