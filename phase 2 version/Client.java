@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,11 +30,13 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     private CardLayout cardLayout;
     private JPanel panels;
     private JTextArea messageArea;
-    private JTextField loginUsernameField;
+    private JTextField loginAccountIDField;
+    private JTextField accountIDField;
     private JTextField usernameField;
     private JTextField friendIDField;
     private JTextField blockIDField;
     private JTextField messageField;
+    private JTextField newUsernameField;
     private JTextArea newProfileArea;
     private JButton changeUsernameButton;
     private JButton changePasswordButton;
@@ -95,7 +96,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     public void createAndShowGUI() {
         JFrame frame = new JFrame("Welcome!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setUndecorated(true);
 
         // Using cardLayout
         cardLayout = new CardLayout();
@@ -106,7 +108,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         addChangeUsernamePanel();
         addChangePasswordPanel();
         addChangeProfilePanel();
-//        addMainPanel();
 
         frame.add(panels);
         frame.setLocationRelativeTo(null);
@@ -125,14 +126,14 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 BorderFactory.createTitledBorder("Login"),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
-        loginUsernameField = new JTextField(20);
+        loginAccountIDField = new JTextField(20);
         loginPasswordField = new JPasswordField(20);
         constraints.gridx = 0;
         constraints.gridy = 0;
         loginPanel.add(new JLabel("Username"), constraints);
 
         constraints.gridx = 1;
-        loginPanel.add(loginUsernameField, constraints);
+        loginPanel.add(loginAccountIDField, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 1;
@@ -167,7 +168,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     // Method to handle login request
     public void handleLogin() {
-        String username = loginUsernameField.getText();
+        String username = loginAccountIDField.getText();
         char[] password = loginPasswordField.getPassword();
         System.out.println(username);
         // Prepare request parameters
@@ -177,6 +178,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.LOGIN, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
+        System.out.print(username);
+        System.out.println(password);
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
                 user = (User) response.getData();
@@ -185,13 +188,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
                 welcomeFrame.dispose();
                 createMainGUI();
-                //   if (user.getUserName().isEmpty()) {
-            //        SwingUtilities.invokeLater(() -> cardLayout.show(panels, "ChangeUsername"));
-            //    } else {
-             //       JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
-             //       welcomeFrame.dispose();
-             //       createMainGUI();
-            //    }
             } else if (response.getType() == RequestResponseProtocol.ResponseType.ERROR) {
                 JOptionPane.showMessageDialog(this, "Login failed: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -216,6 +212,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 BorderFactory.createTitledBorder("Create Account"),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
+        accountIDField = new JTextField(20);
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
         passwordField2 = new JPasswordField(20);
@@ -224,28 +221,34 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridy = 0;
         createPanel.add(new JLabel("Set AccountID"), constraints);
         constraints.gridx = 1;
-        createPanel.add(usernameField, constraints);
+        createPanel.add(accountIDField, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 1;
+        createPanel.add(new JLabel("Set Username"), constraints);
+        constraints.gridx = 1;
+        createPanel.add(usernameField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
         createPanel.add(new JLabel("Set Password"), constraints);
         constraints.gridx = 1;
         createPanel.add(passwordField, constraints);
 
         constraints.gridx = 0;
-        constraints.gridy = 2;
+        constraints.gridy = 3;
         createPanel.add(new JLabel("Confirm Password"), constraints);
         constraints.gridx = 1;
         createPanel.add(passwordField2, constraints);
 
         JButton createButton = new JButton("Create Account");
         constraints.gridx = 0;
-        constraints.gridy = 3;
+        constraints.gridy = 4;
         constraints.gridwidth = 2;
 
         createPanel.add(createButton, constraints);
         JButton switchToLoginButton = new JButton("Back to Login");
-        constraints.gridy = 4;
+        constraints.gridy = 5;
         createPanel.add(switchToLoginButton, constraints);
 
         createButton.addActionListener(e -> handleCreateAccount());
@@ -256,7 +259,8 @@ public class Client extends JComponent implements ClientInterface, Serializable 
 
     // Method to handle Create Account request
     public void handleCreateAccount() {
-        String username = usernameField.getText();
+        String accountID = accountIDField.getText();
+        String loginUsername = usernameField.getText();
         char[] password = passwordField.getPassword();
         char[] password2 = passwordField2.getPassword();
         if (!Arrays.equals(password, password2)) {
@@ -268,7 +272,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         }
         // Prepare request parameters
         Map<String, Object> params = new HashMap<>();
-        params.put("accountID", username);
+        params.put("accountID", accountID);
         params.put("password", new String(password));
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CREATE_ACCOUNT, params);
         sendRequest(request);
@@ -276,6 +280,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
                 user = (User) response.getData();
+                user.changeUserName(loginUsername);
                 JOptionPane.showMessageDialog(this, "Login successful!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 cardLayout.show(panels, "Login");
@@ -299,7 +304,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.insets = new Insets(10, 10, 10, 10);
 
-        JTextField newUsernameField = new JTextField(20);
+        newUsernameField = new JTextField(20);
         changeUsernameButton = new JButton("Change Username");
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -312,12 +317,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.gridwidth = 2;
         panel.add(changeUsernameButton, constraints);
 
-        changeUsernameButton.addActionListener(e -> {
-            String newUser = newUsernameField.getText();
-            handleChangeUsername(newUser);
-        });
+        String newUser = newUsernameField.getText();
+        changeUsernameButton.addActionListener(e -> handleChangeUsername(newUser));
 
-        panel.setVisible(true);
         panels.add(panel, "ChangeUsername");
 
     }
@@ -330,14 +332,12 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_USER_NAME, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
+        System.out.println();
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
                 user = (User) response.getData();
                 JOptionPane.showMessageDialog(null, "Username successfully updated.",
                         "Change Username", JOptionPane.INFORMATION_MESSAGE);
-                JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
-                welcomeFrame.dispose();
-                SwingUtilities.invokeLater(this::createMainGUI);
             } else {
                 JOptionPane.showMessageDialog(null, "Failed to update username: " + response.getErrorCode(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -493,56 +493,136 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
     public void addMainPanel() {
-        JPanel mainPanel = new JPanel(new GridBagLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Header Panel
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(new Color(0x075E54));
+        JLabel titleLabel = new JLabel("Welcome to Message180");
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 0));
+        headerPanel.add(titleLabel, BorderLayout.WEST);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // Main Content Panel
+        JPanel contentPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.insets = new Insets(10, 10, 10, 10);
 
-        mainPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("MainPage"),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
-
+        // Username Label
         JLabel usernameLabel = new JLabel("Welcome Back " + user.getUserName() + "!");
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        usernameLabel.setForeground(Color.BLACK); // Adjust color as needed
+
+        // Account ID Label
         JLabel accountIDLabel = new JLabel("Account ID: " + user.getAccountID());
+        accountIDLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        accountIDLabel.setForeground(Color.BLACK); // Adjust color as needed
+
+        // Profile Text Area (Displays the user's profile)
         JLabel profileTextArea = new JLabel(user.getUserProfile());
-        JButton changePasswordButton = new JButton("Change Password");
+        profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
+        profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
+        profileTextArea.setBorder(null); // Remove border for a cleaner look
+        profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
+
 
         constraints.gridx = 0;
         constraints.gridy = 0;
-        mainPanel.add(usernameLabel, constraints);
+        contentPanel.add(usernameLabel, constraints);
 
         constraints.gridy = 1;
-        mainPanel.add(accountIDLabel, constraints);
+        contentPanel.add(accountIDLabel, constraints);
 
         constraints.gridy = 2;
         constraints.gridheight = 3;
-        mainPanel.add(new JScrollPane(profileTextArea), constraints);
+        contentPanel.add(new JScrollPane(profileTextArea), constraints);
 
         constraints.gridheight = 1;
 
-        constraints.gridy = 5;
-        changePasswordButton = new JButton("Change Password");
-        mainPanel.add(changePasswordButton, constraints);
         constraints.gridy = 6;
-        chooseFriendButton = new JButton("Start a chat!");
-        mainPanel.add(chooseFriendButton, constraints);
-        constraints.gridy = 7;
-        modifyFriendButton = new JButton("Modify Friends");
-        mainPanel.add(modifyFriendButton, constraints);
-        constraints.gridy = 8;
-        logoutButton = new JButton("Logout");
-        mainPanel.add(logoutButton, constraints);
-        logoutButton.addActionListener(e -> {
-            JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
-            welcomeFrame.dispose();
-        });
-        changePasswordButton.addActionListener(e -> addChangePasswordPanel());
-        chooseFriendButton.addActionListener(e -> showChatPanel());
-        modifyFriendButton.addActionListener(e -> showFriendPanel());
+        JButton changePasswordButton = new JButton("Change Password");
+        changePasswordButton.setBackground(new Color(0x075E54));
+        changePasswordButton.setForeground(Color.WHITE);
+        contentPanel.add(changePasswordButton, constraints);
 
-        panels.add(mainPanel, "MainPage");
+        constraints.gridy = 7;
+        JButton startChatButton = new JButton("Start a chat!");
+        startChatButton.setBackground(new Color(0x075E54));
+        startChatButton.setForeground(Color.WHITE);
+        contentPanel.add(startChatButton, constraints);
+
+        constraints.gridy = 8;
+        JButton modifyFriendButton = new JButton("Modify Friends");
+        modifyFriendButton.setBackground(new Color(0x075E54));
+        modifyFriendButton.setForeground(Color.WHITE);
+        contentPanel.add(modifyFriendButton, constraints);
+
+        constraints.gridy = 9;
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.setBackground(new Color(0x075E54));
+        logoutButton.setForeground(Color.WHITE);
+        contentPanel.add(logoutButton, constraints);
+
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+        panels.add(mainPanel);
     }
+//    public void addMainPanel() {
+//        JPanel mainPanel = new JPanel(new GridBagLayout());
+//        GridBagConstraints constraints = new GridBagConstraints();
+//        constraints.fill = GridBagConstraints.HORIZONTAL;
+//        constraints.insets = new Insets(10, 10, 10, 10);
+//
+//        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createTitledBorder("MainPage"),
+//                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+//
+//        JLabel usernameLabel = new JLabel("Welcome Back " + user.getUserName() + "!");
+//        JLabel accountIDLabel = new JLabel("Account ID: " + user.getAccountID());
+//        JLabel profileTextArea = new JLabel(user.getUserProfile());
+////        JButton changePasswordButton = new JButton("Change Password");
+//
+//        constraints.gridx = 0;
+//        constraints.gridy = 0;
+//        mainPanel.add(usernameLabel, constraints);
+//
+//        constraints.gridy = 1;
+//        mainPanel.add(accountIDLabel, constraints);
+//
+//        constraints.gridy = 2;
+//        constraints.gridheight = 3;
+//        mainPanel.add(new JScrollPane(profileTextArea), constraints);
+//
+//        constraints.gridheight = 1;
+//
+//        constraints.gridy = 5;
+//        changePasswordButton = new JButton("Change Password");
+//        mainPanel.add(changePasswordButton, constraints);
+//        constraints.gridy = 6;
+//        chooseFriendButton = new JButton("Start a chat!");
+//        mainPanel.add(chooseFriendButton, constraints);
+//        constraints.gridy = 7;
+//        modifyFriendButton = new JButton("Modify Friends");
+//        mainPanel.add(modifyFriendButton, constraints);
+//        constraints.gridy = 8;
+//        logoutButton = new JButton("Logout");
+//        mainPanel.add(logoutButton, constraints);
+//        logoutButton.addActionListener(e -> {
+//            JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
+//            welcomeFrame.dispose();
+//        });
+//        changePasswordButton.addActionListener(e -> addChangePasswordPanel());
+//        chooseFriendButton.addActionListener(e -> showChatPanel());
+//        modifyFriendButton.addActionListener(e -> showFriendPanel());
+//
+//        panels.add(mainPanel, "MainPage");
+//    }
 
     public void showChatPanel() {
         JPanel chatPanel = new JPanel(new GridBagLayout());
