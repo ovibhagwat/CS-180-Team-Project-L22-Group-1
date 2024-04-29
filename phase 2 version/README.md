@@ -1,5 +1,4 @@
 # Project Phase 3
-README
 
 ## Description:
    In Phase 3 we created a Java-based desktop application that allows users to communicate with their friends through text and photo messages. Users can manage their friend list, block list, and profile information within the application.
