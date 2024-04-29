@@ -5,8 +5,8 @@ README
    In Phase 3 we created a Java-based desktop application that allows users to communicate with their friends through text and photo messages. Users can manage their friend list, block list, and profile information within the application.
 
 ## Features:
-   User Authentication: Users can log in with their account credentials to access the application features.
-   
+**Functions the program have**
+   -User Authentication: Users can log in with their account credentials to access the application features.
    -Main Panel: Upon logging in, users are greeted with the main panel, displaying their username, account ID, and profile information. From here, users can perform various actions, including:
    -Changing username
    -Changing profile
