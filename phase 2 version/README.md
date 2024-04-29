@@ -6,20 +6,34 @@ README
 
 ## Features:
 **Functions the program have**
+
    -User Authentication: Users can log in with their account credentials to access the application features.
+   
    -Main Panel: Upon logging in, users are greeted with the main panel, displaying their username, account ID, and profile information. From here, users can perform various actions, including:
+   
    -Changing username
+   
    -Changing profile
+   
    -Starting a chat with a friend
+   
    -Modifying friend list
+   
    -Modifying block list
+   
    -Logging out
+   
 ## Compilation and Execution Instructions
 **Compile the Java files:**
+
    -To compile, ensure you have JUnit configured in your project.
+   
    -To compile the test classes, ensuring you include the JUnit library in the classpath.
+   
    -Remember to download All of the files.
+   
    -Compile the Java files using javac command.
+   
    -Run the application using java command.
 
 
