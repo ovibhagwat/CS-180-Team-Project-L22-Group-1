@@ -65,19 +65,6 @@ public class User implements UserInterface, Serializable {
     public String getPassword() {
         return password;
     }
-    @Override
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    public void changePassword(String newPassword) throws PasswordErrorException {
-        if (newPassword.equals(getPassword())) {
-            throw new PasswordErrorException("You can't have the new password the same as the old one!");
-        } else {
-            password = newPassword;
-            writeUser(); // Save changes to user data file.
-        }
-    }
-
     public String getUserProfile() {
         return userProfile;
     }
