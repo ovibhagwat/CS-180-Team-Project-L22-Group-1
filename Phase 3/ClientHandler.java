@@ -90,9 +90,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             case CHANGE_USER_NAME:
                 // Process change username request
                 return processChangeUserNameRequest(request);
-            case CHANGE_PASSWORD:
-                // Process change password request
-                return processChangePasswordRequest(request);
             case CHANGE_PROFILE:
                 // Process change profile request
                 return processChangeProfileRequest(request);
@@ -211,29 +208,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             return new RequestResponseProtocol.Response(RequestResponseProtocol.ResponseType.SUCCESS);
         } catch (Exception e) {
             // Handle general errors that may occur during the username change process
-            return new RequestResponseProtocol.Response(RequestResponseProtocol.ResponseType.ERROR,
-                    RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Processes a password change request for a user.
-     * Updates the password if the new password meets criteria and is different from the current one.
-     *
-     * @param request Contains user information and the new password to set.
-     * @return Response indicating the success or error status of the password change operation.
-     */
-    public RequestResponseProtocol.Response processChangePasswordRequest(RequestResponseProtocol.Request request) {
-        Map<String, Object> params = request.getParameters();
-        User user = (User) params.get("user");
-        String newPassword = (String) params.get("newPassword");
-        try {
-            user.changePassword(newPassword);
-            return new RequestResponseProtocol.Response(RequestResponseProtocol.ResponseType.SUCCESS);
-        } catch (PasswordErrorException e) {
-            return new RequestResponseProtocol.Response(RequestResponseProtocol.ResponseType.ERROR,
-                    RequestResponseProtocol.ErrorCode.SAME_PASSWORD);
-        } catch (Exception e) {
             return new RequestResponseProtocol.Response(RequestResponseProtocol.ResponseType.ERROR,
                     RequestResponseProtocol.ErrorCode.INTERNAL_SERVER_ERROR);
         }
