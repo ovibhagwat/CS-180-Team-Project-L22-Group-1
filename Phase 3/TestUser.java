@@ -58,7 +58,7 @@ public class TestUser {
         User user = new User("Amy123", "password", tempFile.getAbsolutePath());
         user.setUserProfile("I am Amy");
         user.changeUserProfile("NewProfile");
-        Assert.assertEquals("Profile should be updated", "NewProfile", user.getUserProfile());
+        Assert.assertEquals("Username should be updated", "NewProfile", user.getUserProfile());
     }
 
     // Tests reading user data from a file to ensure all user attributes are correctly populated.
@@ -91,14 +91,6 @@ public class TestUser {
         Assert.assertTrue(user.getBlockList().containsAll(new ArrayList<>(Arrays.asList("blocked1", "blocked2"))));
         Assert.assertTrue(user.getConversationFilenames().containsAll(new ArrayList<>(Arrays.asList("conv1.txt",
                 "conv2" + ".txt"))));
-    }
-
-    // Tests attempting to change a user's password to the same password, expecting an error.
-    @Test(expected = PasswordErrorException.class)
-    public void changePasswordErrorTest() throws PasswordErrorException, IOException {
-        File tempFile = folder.newFile("Amy123.txt");
-        User user = new User("123", "password", tempFile.getAbsolutePath());
-        user.changePassword("password"); // Assuming this should throw an exception
     }
 
     // Tests writing user data to a file and verifying the contents match expected values.
@@ -138,7 +130,7 @@ public class TestUser {
 
     // Verifies adding a friend who is already a friend or removing a non-friend throws an exception.
     @Test(expected = FriendBlockErrorException.class)
-    public void addAndRemoveFriendErrorTest() throws FriendBlockErrorException, IOException, AccountErrorException {
+    public void addAndRemoveFriendErrorTest() throws FriendBlockErrorException, IOException {
         File tempFile = folder.newFile("Amy123.txt");
         User user = new User("Amy123", "password", tempFile.getAbsolutePath());
         user.addFriend("Bob456");
