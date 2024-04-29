@@ -42,14 +42,6 @@ public interface ClientHandlerInterface {
     public RequestResponseProtocol.Response processChangeUserNameRequest(RequestResponseProtocol.Request request);
 
     /**
-     * Processes requests to change a user's password.
-     *
-     * @param request the request with new password details
-     * @return the response indicating the success or failure of the password change
-     */
-    public RequestResponseProtocol.Response processChangePasswordRequest(RequestResponseProtocol.Request request);
-
-    /**
      * Processes requests to change a user's profile information.
      *
      * @param request the request with new profile details
