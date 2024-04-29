@@ -569,60 +569,18 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         logoutButton.setForeground(Color.WHITE);
         contentPanel.add(logoutButton, constraints);
 
+        logoutButton.addActionListener(e -> {
+            JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
+            welcomeFrame.dispose();
+        });
+        changePasswordButton.addActionListener(e -> addChangePasswordPanel());
+        startChatButton.addActionListener(e -> showChatPanel());
+        modifyFriendButton.addActionListener(e -> showFriendPanel());
+
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
-        panels.add(mainPanel);
+        panels.add(mainPanel, "MainPage");
     }
-//    public void addMainPanel() {
-//        JPanel mainPanel = new JPanel(new GridBagLayout());
-//        GridBagConstraints constraints = new GridBagConstraints();
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//        constraints.insets = new Insets(10, 10, 10, 10);
-//
-//        mainPanel.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createTitledBorder("MainPage"),
-//                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
-//
-//        JLabel usernameLabel = new JLabel("Welcome Back " + user.getUserName() + "!");
-//        JLabel accountIDLabel = new JLabel("Account ID: " + user.getAccountID());
-//        JLabel profileTextArea = new JLabel(user.getUserProfile());
-////        JButton changePasswordButton = new JButton("Change Password");
-//
-//        constraints.gridx = 0;
-//        constraints.gridy = 0;
-//        mainPanel.add(usernameLabel, constraints);
-//
-//        constraints.gridy = 1;
-//        mainPanel.add(accountIDLabel, constraints);
-//
-//        constraints.gridy = 2;
-//        constraints.gridheight = 3;
-//        mainPanel.add(new JScrollPane(profileTextArea), constraints);
-//
-//        constraints.gridheight = 1;
-//
-//        constraints.gridy = 5;
-//        changePasswordButton = new JButton("Change Password");
-//        mainPanel.add(changePasswordButton, constraints);
-//        constraints.gridy = 6;
-//        chooseFriendButton = new JButton("Start a chat!");
-//        mainPanel.add(chooseFriendButton, constraints);
-//        constraints.gridy = 7;
-//        modifyFriendButton = new JButton("Modify Friends");
-//        mainPanel.add(modifyFriendButton, constraints);
-//        constraints.gridy = 8;
-//        logoutButton = new JButton("Logout");
-//        mainPanel.add(logoutButton, constraints);
-//        logoutButton.addActionListener(e -> {
-//            JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
-//            welcomeFrame.dispose();
-//        });
-//        changePasswordButton.addActionListener(e -> addChangePasswordPanel());
-//        chooseFriendButton.addActionListener(e -> showChatPanel());
-//        modifyFriendButton.addActionListener(e -> showFriendPanel());
-//
-//        panels.add(mainPanel, "MainPage");
-//    }
 
     public void showChatPanel() {
         JPanel chatPanel = new JPanel(new GridBagLayout());
