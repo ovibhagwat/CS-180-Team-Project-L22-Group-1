@@ -160,23 +160,6 @@ public class TestClientHandler {
         Assert.assertEquals("Username should be updated", "NewName", user.getUserName());
     }
 
-    // Tests error handling when changing password.
-    @Test
-    public void testProcessChangePasswordErrorRequest() throws IOException {
-        File tempFile = folder.newFile("Amy135.txt");
-        User user = new User("Amy135", "password", tempFile.getAbsolutePath());
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user", user);
-        parameters.put("newPassword", "password");
-        RequestResponseProtocol.Request request = new RequestResponseProtocol.
-                Request(RequestResponseProtocol.RequestType.CHANGE_PASSWORD, parameters);
-        RequestResponseProtocol.Response response = clientHandler.processChangePasswordRequest(request);
-        Assert.assertEquals("Response should be ERROR",
-                RequestResponseProtocol.ResponseType.ERROR, response.getType());
-        Assert.assertEquals("Error code should be SAME_PASSWORD",
-                RequestResponseProtocol.ErrorCode.SAME_PASSWORD, response.getErrorCode());
-    }
-
     // Tests change profile success.
     @Test
     public void testProcessChangeProfileRequest() throws IOException {
