@@ -96,8 +96,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     public void createAndShowGUI() {
         JFrame frame = new JFrame("Welcome!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(true);
+        frame.setSize(500,500);
 
         // Using cardLayout
         cardLayout = new CardLayout();
@@ -480,8 +479,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     public void createMainGUI() {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(true);
+        frame.setSize(800, 600);
         cardLayout = new CardLayout();
         panels = new JPanel(cardLayout);
 //        user = new User("1234", "1234", "1234.txt");
@@ -495,7 +493,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     }
 
     public void addMainPanel() {
-        user = new User("BA");
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
