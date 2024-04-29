@@ -10,6 +10,7 @@ import java.util.Arrays;
  * @version April 1, 2024
  */
 public class User implements UserInterface, Serializable {
+    private static final long serialVersionUID = -1128659259526000486L;
     private String filename; // each user has a file to store user's data, "accountID.txt"
     private String accountID; // unique for every user, primary key
     private String password; // password for user account
