@@ -56,6 +56,10 @@
    
    This group Project was developed by Yixin Hu, Chloe Barnes, Ovi Bhagwat and Yiyang Liu.
 
+   Yixin Hu - Submitted Report on Brightspace
+   Chloe Barnes - Submitted Presentation on Brightspace
+   Yiyang Liu - Submitted Vocareum workspace
+
 # Project Phase 2
 
 ## Compilation and Execution Instructions
