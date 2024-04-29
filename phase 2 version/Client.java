@@ -169,7 +169,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     public void handleLogin() {
         String username = loginAccountIDField.getText();
         char[] password = loginPasswordField.getPassword();
-        System.out.println(username);
+        
         // Prepare request parameters
         Map<String, Object> params = new HashMap<>();
         params.put("accountID", username);
@@ -177,8 +177,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.LOGIN, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        System.out.print(username);
-        System.out.println(password);
+        
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
                 user = (User) response.getData();
@@ -268,6 +267,12 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             passwordField.setText("");
             passwordField2.setText("");
             return;
+        } else if(password.length == 0 && password2.length == 0) {
+            JOptionPane.showMessageDialog(null, "You must enter something for the password!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            passwordField.setText("");
+            passwordField2.setText("");
+            return;
         }
         // Prepare request parameters
         Map<String, Object> params = new HashMap<>();
@@ -331,7 +336,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_USER_NAME, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        System.out.println();
+        
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
                 user = (User) response.getData();
@@ -562,6 +567,12 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         contentPanel.add(modifyFriendButton, constraints);
 
         constraints.gridy = 9;
+        JButton modifyBlockButton = new JButton("Modify Block");
+        modifyBlockButton.setBackground(new Color(0x075E54));
+        modifyBlockButton.setForeground(Color.WHITE);
+        contentPanel.add(modifyBlockButton, constraints);
+
+        constraints.gridy = 10;
         JButton logoutButton = new JButton("Logout");
         logoutButton.setBackground(new Color(0x075E54));
         logoutButton.setForeground(Color.WHITE);
@@ -570,10 +581,12 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         logoutButton.addActionListener(e -> {
             JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
             welcomeFrame.dispose();
+            createAndShowGUI();
         });
         changePasswordButton.addActionListener(e -> addChangePasswordPanel());
         startChatButton.addActionListener(e -> showChatPanel());
         modifyFriendButton.addActionListener(e -> showFriendPanel());
+        modifyBlockButton.addActionListener(e -> showBlockPanel());
 
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
@@ -616,6 +629,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                 }
             });
             returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
+
             panels.add(chatPanel, "Chat");
             cardLayout.show(panels, "Chat");
         } else {
@@ -723,6 +737,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Add friend successfully!",
                                                      "Add Friend", JOptionPane.INFORMATION_MESSAGE);
+                        cardLayout.show(panels, "MainPage");
                     }
                 }
             } else {
@@ -774,6 +789,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Remove friend successfully!",
                                                      "Remove Friend", JOptionPane.INFORMATION_MESSAGE);
+                        cardLayout.show(panels, "MainPage");
                     }
                 }
             } else {
@@ -824,7 +840,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     } else if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS){
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Add Block successfully!",
-                                                     "Add Block", JOptionPane.INFORMATION_MESSAGE);
+                        "Add Block", JOptionPane.INFORMATION_MESSAGE);
+                        cardLayout.show(panels, "MainPage");
+
                     }
                 }
             } else {
@@ -876,6 +894,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Remove Block successfully!",
                                                      "Remove Block", JOptionPane.INFORMATION_MESSAGE);
+                        cardLayout.show(panels, "MainPage");
                     }
                 }
             } else {
