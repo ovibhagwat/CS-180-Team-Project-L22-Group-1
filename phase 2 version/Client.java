@@ -169,7 +169,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
     public void handleLogin() {
         String username = loginAccountIDField.getText();
         char[] password = loginPasswordField.getPassword();
-        
+
         // Prepare request parameters
         Map<String, Object> params = new HashMap<>();
         params.put("accountID", username);
@@ -177,7 +177,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.LOGIN, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        
+
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.DATA) {
                 user = (User) response.getData();
@@ -336,7 +336,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         RequestResponseProtocol.Request request = new RequestResponseProtocol.Request(RequestResponseProtocol.RequestType.CHANGE_USER_NAME, params);
         sendRequest(request);
         RequestResponseProtocol.Response response = receiveResponse();
-        
+
         if (response != null) {
             if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
                 user = (User) response.getData();
@@ -350,6 +350,160 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             JOptionPane.showMessageDialog(null, "No response from server",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+
+    // Method to set look and feel of GUI
+    public static void setLookAndFeel() {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+    }
+
+    public void createMainGUI() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        cardLayout = new CardLayout();
+        panels = new JPanel(cardLayout);
+//        user = new User("1234", "1234", "1234.txt");
+//        user.changeUserName("Name");
+//        user.changeUserProfile("Happy :)");
+        addMainPanel();
+
+        frame.add(panels);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    public void addMainPanel() {
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Header Panel
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(new Color(0x075E54));
+        JLabel titleLabel = new JLabel("Welcome to Message180");
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 0));
+        headerPanel.add(titleLabel, BorderLayout.WEST);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // Main Content Panel
+        JPanel contentPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        // Username Label
+        JLabel usernameLabel = new JLabel("Welcome Back " + user.getUserName() + "!");
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        usernameLabel.setForeground(Color.BLACK); // Adjust color as needed
+
+        // Account ID Label
+        JLabel accountIDLabel = new JLabel("Account ID: " + user.getAccountID());
+        accountIDLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        accountIDLabel.setForeground(Color.BLACK); // Adjust color as needed
+
+        // Profile Text Area (Displays the user's profile)
+        JLabel profileTextArea;
+        if (user.getUserProfile() != null) {
+            profileTextArea = new JLabel(user.getUserProfile());
+            profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
+            profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
+            profileTextArea.setBorder(null); // Remove border for a cleaner look
+            profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
+        } else {
+            profileTextArea = new JLabel("");
+            profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
+            profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
+            profileTextArea.setBorder(null); // Remove border for a cleaner look
+            profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
+        }
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        contentPanel.add(usernameLabel, constraints);
+
+        constraints.gridy = 1;
+        contentPanel.add(accountIDLabel, constraints);
+
+        constraints.gridy = 2;
+        constraints.gridheight = 3;
+        contentPanel.add(new JScrollPane(profileTextArea), constraints);
+
+        constraints.gridheight = 1;
+
+        constraints.gridy = 6;
+        JButton changeProfileButton = new JButton("Edit Bio");
+        changeProfileButton.setBackground(new Color(0x075E54));
+        changeProfileButton.setForeground(Color.WHITE);
+        contentPanel.add(changeProfileButton, constraints);
+
+        constraints.gridy = 7;
+        JButton changePasswordButton = new JButton("Change Password");
+        changePasswordButton.setBackground(new Color(0x075E54));
+        changePasswordButton.setForeground(Color.WHITE);
+        contentPanel.add(changePasswordButton, constraints);
+
+        constraints.gridy = 8;
+        JButton startChatButton = new JButton("Start a chat!");
+        startChatButton.setBackground(new Color(0x075E54));
+        startChatButton.setForeground(Color.WHITE);
+        contentPanel.add(startChatButton, constraints);
+
+        constraints.gridy = 9;
+        JButton modifyFriendButton = new JButton("Modify Friends");
+        modifyFriendButton.setBackground(new Color(0x075E54));
+        modifyFriendButton.setForeground(Color.WHITE);
+        contentPanel.add(modifyFriendButton, constraints);
+
+        constraints.gridy = 10;
+        JButton modifyBlockButton = new JButton("Modify Block");
+        modifyBlockButton.setBackground(new Color(0x075E54));
+        modifyBlockButton.setForeground(Color.WHITE);
+        contentPanel.add(modifyBlockButton, constraints);
+
+        constraints.gridy = 11;
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.setBackground(new Color(0x075E54));
+        logoutButton.setForeground(Color.WHITE);
+        contentPanel.add(logoutButton, constraints);
+
+
+        logoutButton.addActionListener(e -> {
+            JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
+            welcomeFrame.dispose();
+            createAndShowGUI();
+        });
+        changePasswordButton.addActionListener(e -> {
+            addChangePasswordPanel();
+            cardLayout.show(panels, "ChangePassword");
+        });
+        startChatButton.addActionListener(e -> showChatPanel());
+        modifyFriendButton.addActionListener(e -> showFriendPanel());
+        modifyBlockButton.addActionListener(e -> showBlockPanel());
+        changeProfileButton.addActionListener(e -> {
+            addChangeProfilePanel();
+            cardLayout.show(panels, "ChangeProfile");
+        });
+
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+        panels.add(mainPanel, "MainPage");
     }
 
     // Method to create change password panel of GUI
@@ -424,17 +578,19 @@ public class Client extends JComponent implements ClientInterface, Serializable 
         constraints.insets = new Insets(10, 10, 10, 10);
 
         newProfileArea = new JTextArea(5, 20);
-        changeProfileButton = new JButton("Update Profile");
-
+        JScrollPane scrollPane = new JScrollPane(newProfileArea);
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 2;
-        panel.add(new JScrollPane(newProfileArea), constraints);
+        panel.add(scrollPane, constraints);
 
+        changeProfileButton = new JButton("Save Bio");
         constraints.gridy = 1;
-        panel.add(changePasswordButton, constraints);
+        panel.add(changeProfileButton, constraints);
 
-        changeProfileButton.addActionListener(e -> handleChangeProfile(newProfileArea.getText()));
+        changeProfileButton.addActionListener(e -> {
+            handleChangeProfile(newProfileArea.getText());
+        });
 
         panels.add(panel, "ChangeProfile");
     }
@@ -460,145 +616,6 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             JOptionPane.showMessageDialog(null, "No response from server.",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    // Method to set look and feel of GUI
-    public static void setLookAndFeel() {
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-        }
-    }
-
-    public void createMainGUI() {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        cardLayout = new CardLayout();
-        panels = new JPanel(cardLayout);
-//        user = new User("1234", "1234", "1234.txt");
-//        user.changeUserName("Name");
-//        user.changeUserProfile("Happy :)");
-        addMainPanel();
-
-        frame.add(panels);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
-    public void addMainPanel() {
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        // Header Panel
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(new Color(0x075E54));
-        JLabel titleLabel = new JLabel("Welcome to Message180");
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 0));
-        headerPanel.add(titleLabel, BorderLayout.WEST);
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
-
-        // Main Content Panel
-        JPanel contentPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.insets = new Insets(10, 10, 10, 10);
-
-        // Username Label
-        JLabel usernameLabel = new JLabel("Welcome Back " + user.getUserName() + "!");
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        usernameLabel.setForeground(Color.BLACK); // Adjust color as needed
-
-        // Account ID Label
-        JLabel accountIDLabel = new JLabel("Account ID: " + user.getAccountID());
-        accountIDLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        accountIDLabel.setForeground(Color.BLACK); // Adjust color as needed
-
-        // Profile Text Area (Displays the user's profile)
-           JLabel profileTextArea;
-        if (user.getUserProfile() != null) {
-            profileTextArea = new JLabel(user.getUserProfile());
-            profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
-            profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
-            profileTextArea.setBorder(null); // Remove border for a cleaner look
-            profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
-        } else {
-            profileTextArea = new JLabel("");
-            profileTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
-            profileTextArea.setForeground(Color.GRAY); // Adjust color as needed
-            profileTextArea.setBorder(null); // Remove border for a cleaner look
-            profileTextArea.setBackground(Color.WHITE); // Background color matches the panel's background
-        }
-
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        contentPanel.add(usernameLabel, constraints);
-
-        constraints.gridy = 1;
-        contentPanel.add(accountIDLabel, constraints);
-
-        constraints.gridy = 2;
-        constraints.gridheight = 3;
-        contentPanel.add(new JScrollPane(profileTextArea), constraints);
-
-        constraints.gridheight = 1;
-
-        constraints.gridy = 6;
-        JButton changePasswordButton = new JButton("Change Password");
-        changePasswordButton.setBackground(new Color(0x075E54));
-        changePasswordButton.setForeground(Color.WHITE);
-        contentPanel.add(changePasswordButton, constraints);
-
-        constraints.gridy = 7;
-        JButton startChatButton = new JButton("Start a chat!");
-        startChatButton.setBackground(new Color(0x075E54));
-        startChatButton.setForeground(Color.WHITE);
-        contentPanel.add(startChatButton, constraints);
-
-        constraints.gridy = 8;
-        JButton modifyFriendButton = new JButton("Modify Friends");
-        modifyFriendButton.setBackground(new Color(0x075E54));
-        modifyFriendButton.setForeground(Color.WHITE);
-        contentPanel.add(modifyFriendButton, constraints);
-
-        constraints.gridy = 9;
-        JButton modifyBlockButton = new JButton("Modify Block");
-        modifyBlockButton.setBackground(new Color(0x075E54));
-        modifyBlockButton.setForeground(Color.WHITE);
-        contentPanel.add(modifyBlockButton, constraints);
-
-        constraints.gridy = 10;
-        JButton logoutButton = new JButton("Logout");
-        logoutButton.setBackground(new Color(0x075E54));
-        logoutButton.setForeground(Color.WHITE);
-        contentPanel.add(logoutButton, constraints);
-
-        logoutButton.addActionListener(e -> {
-            JFrame welcomeFrame = (JFrame) SwingUtilities.getWindowAncestor(panels);
-            welcomeFrame.dispose();
-            createAndShowGUI();
-        });
-        changePasswordButton.addActionListener(e -> addChangePasswordPanel());
-        startChatButton.addActionListener(e -> showChatPanel());
-        modifyFriendButton.addActionListener(e -> showFriendPanel());
-        modifyBlockButton.addActionListener(e -> showBlockPanel());
-
-        mainPanel.add(contentPanel, BorderLayout.CENTER);
-
-        panels.add(mainPanel, "MainPage");
     }
 
     public void showChatPanel() {
@@ -633,7 +650,7 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     openMessageGui(receiveUser);
                 } else {
                     JOptionPane.showMessageDialog(this, "Please choose a friend!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
             returnButton.addActionListener(e -> cardLayout.show(panels, "MainPage"));
@@ -642,9 +659,9 @@ public class Client extends JComponent implements ClientInterface, Serializable 
             cardLayout.show(panels, "Chat");
         } else {
             JOptionPane.showMessageDialog(this, "Add a friend first before start chatting!",
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
     }
 
     public void showBlockPanel() {
@@ -744,13 +761,13 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     } else if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS){
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Add friend successfully!",
-                                                     "Add Friend", JOptionPane.INFORMATION_MESSAGE);
+                                "Add Friend", JOptionPane.INFORMATION_MESSAGE);
                         cardLayout.show(panels, "MainPage");
                     }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please enter a friend ID!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
@@ -796,13 +813,13 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     } else if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS){
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Remove friend successfully!",
-                                                     "Remove Friend", JOptionPane.INFORMATION_MESSAGE);
+                                "Remove Friend", JOptionPane.INFORMATION_MESSAGE);
                         cardLayout.show(panels, "MainPage");
                     }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please choose a friend!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Friend"));
@@ -848,14 +865,14 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     } else if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS){
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Add Block successfully!",
-                        "Add Block", JOptionPane.INFORMATION_MESSAGE);
+                                "Add Block", JOptionPane.INFORMATION_MESSAGE);
                         cardLayout.show(panels, "MainPage");
 
                     }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please enter a user ID!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
@@ -901,20 +918,20 @@ public class Client extends JComponent implements ClientInterface, Serializable 
                     } else if (response.getType() == RequestResponseProtocol.ResponseType.SUCCESS) {
                         user = (User) response.getData();
                         JOptionPane.showMessageDialog(null, "Remove Block successfully!",
-                                                     "Remove Block", JOptionPane.INFORMATION_MESSAGE);
+                                "Remove Block", JOptionPane.INFORMATION_MESSAGE);
                         cardLayout.show(panels, "MainPage");
                     }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please choose a user!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnButton.addActionListener(e -> cardLayout.show(panels, "Block"));
         panels.add(rBPanel, "rB");
         cardLayout.show(panels, "rB");
     }
-    
+
     public void openMessageGui(User receiveUser) {
         String receiveName = receiveUser.getUserName();
         JFrame frame = new JFrame(receiveName);
